@@ -88,8 +88,7 @@
     </tr>
     <tr>
         <th>프로젝트 기획</th>
-        <th>개요작성</th>
-        <th colspan="5">회의, 의견제안</th>
+        <th colspan="6">개요작성,회의, 의견제안</th>
     </tr>
     <tr>
         <th>요구분석</th>
