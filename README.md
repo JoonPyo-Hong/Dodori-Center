@@ -16,12 +16,12 @@
         <th>세미 프로젝트</th>
         <th>개발 인원</th>
         <th>팀 / 6명<br>
-          (<a href="https://github.com/chanmi-kim">신승환</a>,
-          <a href="https://github.com/SeHoonBae">이수지</a>,
-          <a href="https://github.com/daahyunee">홍혜림</a>,
+          (<a href="https://github.com/chanmi-kim">강혜림</a>,
+          <a href="https://github.com/SeHoonBae">신승환</a>,
+          <a href="https://github.com/daahyunee">이수지</a>,
           <a href="https://github.com/AlfredCho">조윤경</a>,
           <a href="https://github.com/jubi93">홍준표</a>,
-          <a href="https://github.com/popcon4199">강혜림</a>)
+          <a href="https://github.com/popcon4199">홍혜림</a>)
       </th>
     </tr>
       <tr>
@@ -79,16 +79,16 @@
 <table>
     <tr>
         <th>업무/구성원</th>
-        <th><a href="https://github.com/daahyunee">신승환</a></th>
-        <th><a href="https://github.com/chanmi-kim">이수지</a></th>
-        <th><a href="https://github.com/SeHoonBae">홍혜림</a></th>
+        <th><a href="https://github.com/daahyunee">강혜림</a></th>
+        <th><a href="https://github.com/chanmi-kim">신승환</a></th>
+        <th><a href="https://github.com/SeHoonBae">이수지</a></th>
         <th><a href="https://github.com/AlfredCho">조윤경</a></th>
         <th><a href="https://github.com/jubi93">홍준표</a></th>
-        <th><a href="https://github.com/popcon4199">강혜림</a></th>
+        <th><a href="https://github.com/popcon4199">홍혜림</a></th>
     </tr>
     <tr>
         <th>프로젝트 기획</th>
-        <th colspan="6">개요작성,회의, 의견제안</th>
+        <th colspan="6">회의, 의견제안,개요작성</th>
     </tr>
     <tr>
         <th>요구분석</th>
@@ -100,12 +100,11 @@
     </tr>
     <tr>
         <th>기능명세서</th>
-        <th>문서정리</th>
-        <th colspan="5">문서작성</th>
+        <th colspan="6">문서작성 및 문서정리</th>
     </tr>
     <tr>
         <th>화면설계</th>
-        <th>학생</th>
+        <th>관리자</th>
         <th>교사</th>
         <th>관리자</th>
         <th>교사</th>
