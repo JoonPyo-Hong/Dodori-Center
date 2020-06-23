@@ -109,8 +109,9 @@
         <th>관리자</th>
         <th>교사</th>
         <th>관리자</th>
-        <th>교사</th>
-        <th colspan="2">관리자</th>
+        <th>관리자</th>
+        <th>관리자 및 교육생</th>
+        <th></th>
     </tr>
     <tr>
         <th>소스(코딩)</th>
