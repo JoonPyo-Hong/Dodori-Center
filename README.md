@@ -1,5 +1,4 @@
-# sist-center-
-# SEDU Center
+# 도돌이 센터
 
 ![Sedu Center](asset/sedu-center-thumbnail.png "Preview")
 
@@ -8,21 +7,21 @@
 <table>
     <tr>
         <th>프로젝트명</th>
-        <th>SEDU Center</th>
+        <th>도돌이 센터</th>
         <th>개발 기간</th>
-        <th>2019.04.05. ~ 2019.04.19.</th>
+        <th>2020.05.05. ~ 2020.06.17.</th>
     </tr>
     <tr>
         <th>프로젝트 성격</th>
         <th>세미 프로젝트</th>
         <th>개발 인원</th>
         <th>팀 / 6명<br>
-          (<a href="https://github.com/chanmi-kim">KCM</a>,
-          <a href="https://github.com/SeHoonBae">BSH</a>,
-          <a href="https://github.com/daahyunee">LDH</a>,
-          <a href="https://github.com/AlfredCho">JSB</a>,
-          <a href="https://github.com/jubi93">YJY</a>,
-          <a href="https://github.com/popcon4199">CYN</a>)
+          (<a href="https://github.com/chanmi-kim">신승환</a>,
+          <a href="https://github.com/SeHoonBae">이수지</a>,
+          <a href="https://github.com/daahyunee">홍혜림</a>,
+          <a href="https://github.com/AlfredCho">조윤경</a>,
+          <a href="https://github.com/jubi93">홍준표</a>,
+          <a href="https://github.com/popcon4199">강혜림</a>)
       </th>
     </tr>
       <tr>
@@ -80,12 +79,12 @@
 <table>
     <tr>
         <th>업무/구성원</th>
-        <th><a href="https://github.com/daahyunee">LDH</a></th>
-        <th><a href="https://github.com/chanmi-kim">KCM</a></th>
-        <th><a href="https://github.com/SeHoonBae">BSH</a></th>
-        <th><a href="https://github.com/AlfredCho">JSB</a></th>
-        <th><a href="https://github.com/jubi93">YJY</a></th>
-        <th><a href="https://github.com/popcon4199">CYN</a></th>
+        <th><a href="https://github.com/daahyunee">신승환</a></th>
+        <th><a href="https://github.com/chanmi-kim">이수지</a></th>
+        <th><a href="https://github.com/SeHoonBae">홍혜림</a></th>
+        <th><a href="https://github.com/AlfredCho">조윤경</a></th>
+        <th><a href="https://github.com/jubi93">홍준표</a></th>
+        <th><a href="https://github.com/popcon4199">강혜림</a></th>
     </tr>
     <tr>
         <th>프로젝트 기획</th>
