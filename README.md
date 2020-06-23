@@ -88,7 +88,8 @@
     </tr>
     <tr>
         <th>프로젝트 기획</th>
-        <th colspan="6">회의, 의견제안,개요작성</th>
+        <th colspan="5">회의, 의견제안</th>
+        <th>개요작성</th>
     </tr>
     <tr>
         <th>요구분석</th>
@@ -100,7 +101,8 @@
     </tr>
     <tr>
         <th>기능명세서</th>
-        <th colspan="6">문서작성 및 문서정리</th>
+        <th colspan="5">문서작성</th>
+        <th>문서정리</th>
     </tr>
     <tr>
         <th>화면설계</th>
