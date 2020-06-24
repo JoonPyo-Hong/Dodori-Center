@@ -20,6 +20,6 @@
       <td>DML, Java DOC</td>
       <td>DML, Java DOC</td>
       <td>DML,DCL, Java DOC </td>
-      <td>테이블 명세서,기획서</td>
+      <td>테이블 명세서, 기획서</td>
   </tr>
 </table>
