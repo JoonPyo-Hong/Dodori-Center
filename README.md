@@ -16,9 +16,9 @@
    <tr>
       <td>문서 작성</td>
       <td>DML, DDL, Java DOC, 요구분석서</td>
-      <td>DML, Java DOC</td, 요구분석서>
-      <td>DML, Java DOC</td, 요구분석서>
-      <td>DML, Java DOC</td, 요구분석서>
+      <td>DML, Java DOC, 요구분석서</td>
+      <td>DML, Java DOC, 요구분석서</td>
+      <td>DML, Java DOC, 요구분석서</td>
       <td>DML,DDL, Java DOC, 요구분석서 </td>
       <td>테이블 명세서, 기획서, 요구분석서</td>
   </tr>
