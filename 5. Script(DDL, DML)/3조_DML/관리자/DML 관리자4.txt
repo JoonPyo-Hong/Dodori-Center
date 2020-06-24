@@ -1,0 +1,177 @@
+===========================================
+교육생의 동아리 근태 상황을 수정함.
+===========================================
+create or replace procedure proc191(
+    pnum number,            -- 번호
+    pstate varchar2         --수정이 필요한 상태 입력
+)
+is
+   
+begin
+    update tblStudyGroup set state_study_group = pstate where seq_study_group = pnum;
+end;
+commit;
+-- rc.seq_regist_course,s.student_name,g.state_study_group
+ select  s.student_name,g.state_study_group,g.seq_study_group from tblRegistCourse rc inner join tblStudent s on s.seq_student = rc.seq_student
+ inner join tblStudyGroup g on g.seq_regist_course = rc.seq_regist_course order by g.seq_study_group;
+ 
+    update vwstudygroupattendence175 set "근태" = pattend where "동아리 모임 날짜" = p and 학생명 = pname;    
+end;
+
+
+
+
+
+select  distinct r.seq_regist_course  from tblstudent st 
+    inner join tblRegistCourse r 
+    on st.seq_student = r.seq_student where st.student_name = '권건정';
+
+===========================================
+동아리 스케줄을 추가함.
+===========================================
+create or replace procedure proc193(
+    pdate date,         --동아리스케줄 날짜
+    proom varchar2,         --동아리스케줄 장소
+    pcapacity number            --동아리 최대 수용인원
+)
+is
+begin
+    insert into tblStudyGroupSchedual values (seq_study_group_schedual.nextVal, to_date(pdate,'yy-mm-dd'), proom, pcapacity);
+end;
+
+
+-- 교육생 동아리를 탈퇴 처리함.
+create or replace procedure proc19005(
+    pname varchar2       
+)
+is
+    vattendence number;
+begin
+   select DISTINCT g.seq_study_group into vattendence from 
+    tblStudent s inner join tblregistcourse r on s.seq_student = r.seq_student
+        inner join tblstudygroup g on g.seq_regist_course = r.seq_regist_course
+            inner join tblstudygroupattendence t on  t.seq_study_group = g.seq_study_group where s.student_name = pname; 
+          
+        update tblStudyGroupAttendence set study_group_attendence_state = '탈퇴' where seq_study_group = vattendence;
+        
+end;
+===========================================
+동아리명을 수정함.
+===========================================
+create or replace procedure proc2002(
+    pstandard varchar2,       
+    pnum int
+  
+)
+is
+begin
+    
+     update tblOpenStudyGroup set study_group_name = pstandard where seq_open_study_group = pnum;
+end;
+===========================================
+동아리를 추가함.
+===========================================
+create or replace procedure proc2001(
+    pstandard varchar2      
+
+  
+)
+is
+begin
+    insert into tblOpenStudyGroup values (seq_study_standard.nextVal, pstandard);
+end;
+
+===========================================
+동아리를 삭제함.
+===========================================
+create or replace procedure proc2003(
+          
+    pnum int
+  
+)
+is
+begin
+    
+     DELETE tblOpenStudyGroup where seq_open_study_group = pnum;
+end;
+
+===========================================
+수강신청
+===========================================
+===========================================
+수강 번호를 입력받아서 수강신청한다.
+===========================================
+create or replace procedure procsugang(
+    pnum number,  -- 교육생 번호 
+    pgwa number  -- 과정 번호
+    
+)
+is 
+    prnum date; -- 과정 날짜
+begin
+    select course_start_date into prnum  from tblOpenCourse where seq_opencourse = pgwa;
+    insert into tblRegistCourse values (seq_regist_course.nextval,pnum,pgwa,prnum,null,'대기');
+    
+end;
+
+commit;
+
+
+select * from tblRegistCourse;
+
+
+
+select c.seq_opencourse,c.course_start_date,c.course_finish_date,r.course_name from 
+    tblOpenCourse c
+        inner join tblCourse r
+            on c.seq_course = r.seq_course order by c.seq_opencourse;
+            
+            
+            select student_name,substr(student_ssn,8,7),seq_student from tblstudent;
+            select * from tblstudent;
+            
+            
+         
+select s.study_group_name,j.seq_job_info from 
+    tblOpenStudyGroup s
+        inner join 
+            tblStudyGroup o
+                on s.seq_open_study_group = o.seq_open_study_group
+                    inner join tblJobInfo j
+                        on j.seq_study_group =o.seq_study_group
+                    order by s.study_group_name; 
+                
+           
+           
+ 
+ 
+ select count(sg.seq_open_study_group)--동아리별 취업한 교육생 숫자
+    from tblcompany c 
+        inner join tbljobinfo j 
+            on c.seq_company = j.seq_company
+                inner join tblStudyGroup sg
+                    on sg.seq_study_group = j.seq_study_group
+                        inner join tblOpenStudyGroup osg
+                            on sg.seq_open_study_group = osg.seq_open_study_group
+                                inner join tblRegistCourse r
+                                    on sg.seq_regist_course = r.seq_regist_course
+                                        inner join tblStudent st
+                                            on r.seq_student = st.seq_student 
+                                                group by sg.seq_open_study_group;
+                                            
+  select count(osg.seq_open_study_group) as 동아리원수
+    from tblOpenStudyGroup osg 
+        inner join tblStudyGroup sg 
+            on osg.seq_open_study_group = sg.seq_open_study_group 
+                group by osg.seq_open_study_group;                                         
+                                            
+                                            
+                                            
+                                            
+                                            
+    select * from tblJobInfo;
+                                            
+                                            
+                                            
+                                            
+                                            

@@ -1,0 +1,398 @@
+===========================================
+개설 과정 관리
+===========================================
+--과정 정보는 과정명, 과정기간(시작 년월일, 끝 년월일), 강의실 정보를 입력한다.
+--강의실 정보는 기초 정보 강의실명에서 선택적으로 추가할 수 있어야 한다.
+create or replace procedure proc76_insert(
+    pname number,         --과정명
+    pstartdate varchar2,            --과정 시작날짜
+    pfinishdate varchar2,           --과정 종료날짜
+    pclassroom varchar2     --강의실정보
+
+)
+is
+    vCoursenum number;      --과정 기초데이터의 기본키값
+    vClassroomnum number;       --강의실 기초데이터의 기본키값
+begin
+    --select seq_course into vCoursenum from tblCourse where seq_course = pname;
+    select seq_classroom into vClassroomnum from tblClassroom where classroom_name = pclassroom;
+   -- seq_opencourse := 12;
+    insert into tblOpenCourse values (
+        seq_opencourse.nextVal,
+        to_date(pstartdate, 'yyyy-mm-dd'),
+        to_date(pfinishdate, 'yyyy-mm-dd'),
+        vClassroomnum,
+        pname);
+end;
+
+
+--개설 과정 정보 출력시 개설 과정명, 개설 과정기간(시작 년월일, 끝 년월일), 강의실명,
+--교육생 등록 인원,개설 과목 등록 여부를 출력한다. 
+create or replace procedure proc73(
+    pcoursename varchar2,            --검색할 과정명
+    presult out sys_refcursor           --출력할 커서 생성
+)
+is
+begin
+    open presult for
+        select * from vw73_1
+            where 과정명 = pcoursename;
+end;
+
+
+--개설 과정 정보에 대한 입력, 출력, 수정, 삭제 기능을 사용할 수 있어야 한다.
+create or replace procedure proc76_delete(
+    pname varchar2          --삭제할 과정명 입력
+)
+is
+begin
+    update tblCourse set course_name = course_name || '(폐강)' where course_name = pname;
+end;
+
+create or replace procedure proc76_update_classroomname(
+    pclassroom varchar2,          --수정할 원래 강의실명
+    pnewclassroom varchar2       --수정할 새로운 강의실명
+)
+is
+begin
+    update tblClassroom set classroom_name = pnewclassroom where classroom_name=pclassroom;
+end;
+
+create or replace procedure proc76_update_coursedate(
+    pstartdate date,          --수정할 원래과정시작날짜
+    pnewstartdate date,     --수정할 새로운 과정시작날짜
+    pfinishdate date,         --수정할 원래과정종료날짜
+    pnewfinishdate date     --수정할 새로운 과정종료날짜
+)
+is
+begin
+    update tblOpenCourse set course_start_date = pnewstartdate where course_start_date = pstartdate;
+    update tblOpenCourse set course_finish_date = pnewfinishdate where course_finish_date = pfinishdate;
+end;
+
+create or replace procedure proc76_update_coursename(
+    pname varchar2,          --수정할 원래 과정명
+    pnewname varchar2       --수정할 새로운 과정명
+)
+is
+begin
+    update tblCourse set course_name = pnewname where course_name = pname;
+end;
+
+
+
+===========================================
+개설 과목 관리
+===========================================
+--특정 개설 과정 선택시 개설 과목 정보 출력
+--개설 과목 출력시 개설 과정 정보(과정명, 과정기간(시작 년월일, 끝 년월일), 강의실)와 과목명,
+--과목기간(시작 년월일, 끝 년월일), 교재명, 교사명을 출력한다.
+create or replace procedure proc79(
+    pnum number,             --특정 개설과정 선택시
+    presult out sys_refcursor
+ )
+ is
+ begin
+    open presult for
+        select * from vw79
+            where seq_opencourse = pnum;
+ end;
+
+--개설 과목 신규 등록을 할 수 있도록 한다. 
+--개설 과목 정보 입력시 과목명, 과목기간(시작 년월일, 끝 년월일), 교재명, 교사명을 입력할 수 있어야 한다. 
+create or replace procedure proc79_insert(
+    pcoursenum number,
+    psubjectnum number,
+    pstart varchar2,
+    pfinish varchar2,
+    pbook varchar2,
+    pteacher varchar2
+)
+is
+    vopencourse number;
+    vbook number;
+    vteacher number;
+    vlecture number;
+begin
+    select seq_book into vbook from tblBook where book_name = pbook;
+    select seq_teacher into vteacher from tblTeacher where teacher_name = pteacher;
+    select max(seq_opencourse) into vopencourse from tblOpenCourse where seq_course = pcoursenum;
+
+    vlecture := seq_lecture.nextVal;
+    insert into tblLecture values(vlecture, vteacher, vopencourse);
+    insert into tblOpenSubject values(seq_opensubject.nextVal, to_date(pstart, 'yy-mm-dd'), to_date(pfinish, 'yy-mm-dd')
+            , psubjectnum, vbook, vlecture);
+end;
+
+
+--교사명은 교사 명단에서 선택적으로 추가할 수 있어야 한다.
+--교사 명단은 현재 과목과 강의 가능 과목이 일치하는 교사 명단만 보여야 한다.
+create or replace procedure proc82(
+    pnum number,         --현재 과목번호 입력
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+        select * from vw82
+            where seq_subject = pnum;
+end;
+
+
+--개설 과목 정보에 대한 입력, 출력, 수정, 삭제 기능을 사용할 수 있어야 한다.
+create or replace procedure proc85_delete(
+    pname varchar2          --삭제할 과목명 입력
+)
+is
+begin
+    update tblSubject set subject_name = subject_name || '(폐강)' where subject_name = pname;
+end;
+
+
+create or replace procedure proc85_update_subjectname(
+    pname varchar2,          --수정할 원래 과정명
+    pnewname varchar2       --수정할 새로운 과정명
+)
+is
+begin
+    update tblSubject set subject_name = pnewname where subject_name = pname;
+end;
+
+
+
+===========================================
+교육생 관리
+===========================================
+--교육생 정보 입력시 교육생 이름, 주민번호 뒷자리, 전화번호를 기본으로 등록하고,
+--주민번호 뒷자리는 교육생 본인이 로그인시 패스워드로 사용된다. 등록일은 자동 입력되도록 한다.
+create or replace procedure proc93_insert(
+    pname varchar2,         --교육생 이름
+    pssn varchar2,          --교육생 주민번호
+    ptel varchar2,              --교육생 전화번호
+    pmajor varchar2,            --교육생 전공
+    popencourse number     --새로운 교육생에게 배정된 과정을 랜덤값으로 받아오기
+)
+is
+    vseqstudent number;      --새로운 교육생의 기본키값
+    vpassdate date;         --수료날짜값
+begin
+    vseqstudent := seq_student.nextVal;
+
+
+    insert into tblStudent values (vseqstudent, pname, pssn, ptel, pmajor);
+    insert into tblRegistCourse values (seq_regist_course.nextVal, vseqstudent, popencourse
+            , to_date(sysdate, 'yyyy-mm-dd'), to_date(sysdate, 'yyyy-mm-dd') + 60,  '수강전');
+end;
+
+
+--특정 교육생 선택시 교육생이 수강 신청한 또는 수강중인, 수강했던 개설 과정 정보(과정명, 과정기간(시작 년월일, 끝 년월일),
+--강의실, 수료 및 중도탈락 여부, 수료 및 중도탈락 날짜)를 출력한다.
+create or replace procedure proc90(
+    pstudentnum number,             --출력하고 싶은 교육생번호 입력
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+        select * from vw93_1
+            where seq_student = pstudentnum;
+end;
+
+
+--교육생 정보를 쉽게 확인하기 위한 검색 기능을 사용할 수 있어야 한다.
+create or replace procedure proc91(
+    pnum number,         --검색하고싶은 교육생 번호 입력
+    pname out varchar2,      --교육생 이름
+    pssn out varchar2,          --교육생 주민번호
+    ptel out varchar2,          --교육생 전화번호
+    pmajor out varchar2     --교육생 전공
+)
+is
+begin
+    select student_name, student_ssn, student_tel, major into pname, pssn, ptel, pmajor from tblStudent where seq_student = pnum;
+end;
+
+
+--교육생에 대한 수료 및 중도 탈락 처리를 할 수 있어야 한다. 수료 또는 중도탈락 날짜를 입력할 수 있어야 한다.
+create or replace procedure proc92(
+    pstudentnum number,         --update할 교육생 번호 입력
+    pregiststate varchar2,          --수료 및 중도탈락값 입력
+    pstatedate date                        --수료 및 중도탈락 날짜 입력
+)
+is
+begin
+    update tblRegistCourse set p_date_s_date = pstatedate where seq_student = pstudentnum;
+    update tblRegistCourse set resist_course_state = pregiststate where seq_student = pstudentnum;
+end;
+
+
+--교육생 정보에 대한 입력, 출력, 수정, 삭제 기능을 사용할 수 있어야 한다.
+create or replace procedure proc93_delete(
+   pstudentnum number           --삭제할 교육생 번호 입력 
+)
+is
+begin
+    update tblStudent set student_name = student_name || '(삭제)' where seq_student = pstudentnum;
+
+end;
+
+create or replace procedure proc93_update_studentname(
+    pnum number,            --수정할 교육생번호 입력
+    pname varchar2          --수정할 교육생 이름 입력
+)
+is
+begin
+    update tblStudent set student_name = pname where seq_student = pnum;
+end;
+
+create or replace procedure proc93_update_studentregist(
+    pnum number,            --수정할 교육생번호 입력
+    pregistdate date          --수정할 교육생 등록일 입력
+)
+is
+begin
+    update tblRegistCourse set regist_date = pregistdate where seq_student = pnum;
+end;
+
+create or replace procedure proc93_update_studentssn(
+    pnum number,            --수정할 교육생번호 입력
+    pssn varchar2          --수정할 교육생 주민번호 입력
+)
+is
+begin
+    update tblStudent set student_ssn = pssn where seq_student = pnum;
+end;
+
+create or replace procedure proc93_update_studenttel(
+    pnum number,            --수정할 교육생번호 입력
+    pregistdate date          --수정할 교육생 등록일 입력
+)
+is
+begin
+    update tblRegistCourse set regist_date = pregistdate where seq_student = pnum;
+end;
+
+create or replace procedure proc93UpdateMod(
+    pnum number,            --수정할 교육생번호 입력
+    pname varchar2,          --수정할 교육생 이름 입력
+    pssn varchar2,              --수정할 교육생 주민등록번호 입력
+    ptel varchar2,                 --수정할 전화번호 입력
+    pmajor varchar2                 --수정할 전공 입력
+    
+)
+is
+begin
+    update tblStudent set student_name = pname where seq_student = pnum;
+    update tblStudent set student_ssn = pssn where seq_student = pnum;
+    update tblStudent set student_tel = ptel where seq_student = pnum;
+    update tblStudent set major = pmajor where seq_student = pnum;
+
+end;
+
+
+
+
+
+===========================================
+동아리 관리 기능
+===========================================
+
+-- 동아리 가입기준을 입력, 수정, 삭제, 조회할 수 있다.
+create or replace procedure proc190_insert(
+    pstandard varchar2,         --가입기준
+    pstudygroup number      --개설된 동아리그룹 번호
+)
+is
+begin
+    insert into tblStudyStandard values (seq_study_standard.nextVal, pstandard, pstudygroup);
+end;
+
+create or replace procedure proc190_delete(
+    pnum number         --가입기준 기본키
+)
+is 
+begin
+    update tblstudystandard set study_standard = study_standard || '(삭제)' where seq_study_standard = pnum;
+end;
+
+create or replace procedure proc190_update_group(
+    pnum number,            --수정데이터 기본키
+    pgroup varchar2      --수정할 가입기준 데이터
+)
+is
+begin
+    update tblStudyStandard set seq_open_study_group = pgroup where seq_study_standard = pnum;
+end;
+
+create or replace procedure proc190_update_standard(
+    pnum number,            --수정데이터 기본키
+    pstandard varchar2      --수정할 가입기준 데이터
+)
+is
+begin
+    update tblStudyStandard set study_standard = pstandard where seq_study_standard = pnum;
+end;
+
+
+
+-- 동아리 신청자의 상태를 수정할 수 있다. (대기-> 탈락 or 대기-> 합격)(update)-> 
+--관리자가 보고 걍 판단 할 수 밖에.. 동아리 가입기준 보고 
+-- 동아리 탈퇴신청을 조회하여 교육생의 탈퇴신청을 탈퇴 상태로 변경 
+-- -> update(기존에 있었던 동아리 정보에도 업데이트 필요)          
+create or replace procedure proc191(
+    pnum number,            -- 번호
+    pstate varchar2         --수정이 필요한 상태 입력
+)
+is
+   
+begin
+    update tblStudyGroup set state_study_group = pstate where seq_study_group = pnum;
+end;
+
+
+-- 동아리 스케쥴을 추가할 수 있다.
+create or replace procedure proc193(
+    pdate date,         --동아리스케줄 날짜
+    proom varchar2,         --동아리스케줄 장소
+    pcapacity number            --동아리 최대 수용인원
+)
+is
+begin
+    insert into tblStudyGroupSchedual values (seq_study_group_schedual.nextVal, to_date(pdate,'yy-mm-dd'), proom, pcapacity);
+end;
+
+
+-- 동아리 출석을 보고 한달에 5번이하 한 사람-> 탈퇴상태로 변경 -> update
+create or replace procedure proc195(
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+        select seq_student from vw194_student where 참석횟수 <= 5;
+end;
+
+
+create or replace procedure proc195_out(
+    pnum number         --교육생 번호 받아오기
+)
+is
+    vattendence number;
+    vstudygroup number;
+begin
+    select distinct sg.seq_regist_course into vstudygroup 
+        from tblRegistCourse rc 
+            inner join tblStudyGroup sg
+                on rc.seq_regist_course = sg.seq_regist_course
+        where seq_student = pnum;
+
+        select distinct sga.seq_study_group into vattendence
+            from tblStudyGroup sg
+                inner join tblStudyGroupAttendence sga
+                    on sg.seq_study_group = sga.seq_study_group
+            where sg.seq_regist_course = vstudygroup;
+
+        update tblStudyGroupAttendence set study_group_attendence_state = '탈퇴' where seq_study_group = vattendence;
+
+end;
+

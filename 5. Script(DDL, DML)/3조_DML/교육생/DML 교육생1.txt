@@ -1,0 +1,267 @@
+-- 교육생
+
+
+===========================================
+교육생 개인의 정보 + 수강한 과정명, 과정기간(시작 년월일, 끝 년월일), 강의실 출력한다.
+===========================================
+commit;
+set serverout on;
+create or replace procedure proc151(
+    pnum1 varchar2,
+    pnum2 varchar2,
+    presult out sys_refcursor
+)
+is
+begin
+open presult for
+select t.seq_student as "번호",t.student_name "이름", t.student_ssn as"주민번호 뒷자리",
+t.student_tel as"전화번호",t.major as "전공/비전공", w.course_name"과정명",o.course_start_date as "과정시작날짜",
+o.course_finish_date "과정종료날짜", m.classroom_name "강의실명" 
+from tblstudent t  -- 교육생-기초 데이터
+    inner join tblRegistCourse r  -- 교육생 + 과정 - 수강 신청
+        on t.seq_student = r.seq_student
+            inner join tblOpenCourse o -- 개설과정
+                on  r.seq_opencourse = o.seq_opencourse
+                    inner join tblCourse w --과정- 기초데이터
+                        on o.seq_course = w.seq_course
+                            inner join tblClassroom m -- 강의실 - 기초데이터
+                                on o.seq_classroom = m.seq_classroom
+                                     where t.student_name = pnum1 and substr(t.student_ssn,8,7) = pnum2
+                                          order by t.seq_student;                                     
+end proc151;
+
+
+select * from tblstudent;
+
+set serveroutput on;
+declare
+    presult sys_refcursor;
+    pnum tblstudent.seq_student%type;
+    pname tblstudent.student_name%type;
+    pssn tblstudent.student_ssn%type;
+    ptel tblstudent.student_tel%type;
+    pmajor tblstudent.major%type;
+    pstart tblopencourse.course_start_date%type;
+    pfinsh tblopencourse.course_finish_date%type;
+    pclass tblclassroom.classroom_name%type;
+begin
+
+     proc151('박경호','2436035', presult);  
+    
+  
+    loop
+    fetch presult into pnum, pname,pssn,ptel,pmajor,pstart,pfinsh,pclass;
+    exit when presult%notfound;
+   
+    dbms_output.put_line(pnum);
+    dbms_output.put_line(pname);
+    dbms_output.put_line(pssn);
+    dbms_output.put_line(ptel);
+    dbms_output.put_line(pmajor);
+    dbms_output.put_line(pstart);
+    dbms_output.put_line(pfinsh);
+    dbms_output.put_line(pclass);
+    end loop;
+end;
+     
+
+commit;
+
+
+===========================================
+본인의 출결 현황을(전체,월,일) 근태상황 구분(정상, 지각, 조퇴, 외출, 병가, 기타) 조회출력 한다.
+===========================================
+create or replace procedure proc157(
+    pnum1 varchar2,
+    pnum2 varchar2,
+    presult out sys_refcursor
+)
+is
+begin
+open presult for
+select a.attendence_date "날짜", a.attendense_state "근태 상황" 
+    from tblStudent s -- 교육생 - 기초데이터
+        inner join tblRegistCourse r --교육생 + 과정 - 수강 신청
+            on s.seq_student = r.seq_student
+                inner  join tblAttendence a -- 출결
+                    on r.seq_regist_course = a.seq_regist_course
+                         where s.student_name = pnum1 and substr(s.student_ssn,8,7) = pnum2;
+    
+
+end;
+
+commit;
+
+declare
+    presult sys_refcursor;
+    pdate tblattendence.attendence_date%type;
+    pstate tblattendence.attendense_state%type;
+
+begin
+
+     proc157('박경호','2436035', presult);  
+    
+  
+    loop
+    fetch presult into pdate,pstate;
+    exit when presult%notfound;
+   
+    dbms_output.put_line(pdate);
+    dbms_output.put_line(pstate);
+    end loop;
+end;
+--------------------------------------------------------------------------
+
+
+===========================================
+본인의 근태 관리를 기록한다. (출근 1회, 퇴근 1회)
+===========================================
+create or replace procedure proc156(
+    vdate date,
+    vstate varchar2,
+    pnum1 varchar2,
+    pnum2 varchar2,
+    vin date,
+    vout date
+)
+is
+    pnum number := 0;
+begin
+select DISTINCT r.seq_regist_course into pnum
+    from tblStudent s -- 교육생 - 기초데이터
+        inner join tblRegistCourse r --교육생 + 과정 - 수강 신청
+            on s.seq_student = r.seq_student
+                inner  join tblAttendence a -- 출결
+                    on r.seq_regist_course = a.seq_regist_course
+                         where s.student_name = pnum1 and substr(s.student_ssn,8,7) = pnum2;
+        insert into tblAttendence values (seq_attendence.nextval, vdate,vstate,vin,vout,pnum);
+
+end;
+
+
+
+commit;
+
+rollback;
+
+
+select  r.seq_regist_course
+    from tblStudent s -- 교육생 - 기초데이터
+        inner join tblRegistCourse r --교육생 + 과정 - 수강 신청
+            on s.seq_student = r.seq_student
+                inner  join tblAttendence a -- 출결
+                    on r.seq_regist_course = a.seq_regist_course
+                         where s.student_name = '박경호' and substr(s.student_ssn,8,7) = '2436035';
+
+
+commit;
+
+select * from tblAttendence;
+
+
+
+
+-- 원본 
+select DISTINCT u.seq_subject as 과목번호, u.subject_name 과목이름, u.subject_period 과목기간,b.book_name 교재명, t.teacher_name 교사명,p.attendense_point 출결배점, p.written_test_point 필기배점,
+p.practical_test_point 실기배점,sq.attendence_score 출결점수, sq.written_test_score 필기점수, sq.practical_test_score 실기점수, ts.test_date "시험날짜"
+ 
+    from tblStudent se -- 교육생 - 기초데이터* 
+        inner join tblRegistCourse r -- 교육생 + 과정 - 수강 신청*
+            on se.seq_student = r.seq_student
+                inner join tblOpenCourse o--개설 과정
+                    on r.seq_opencourse = o.seq_opencourse
+                        inner join tblLecture l -- 교사 + 과정 - 강의
+                            on o.seq_opencourse = l.seq_opencourse
+                                inner join  tblOpenSubject s -- 개설 과목
+                                    on l.seq_lecture = s.seq_lecture
+                                        inner join tblSubject u -- 과목 - 기초데이터
+                                            on s.seq_subject = u.seq_subject
+                                                inner join tblBook b -- 교재 - 기초데이터
+                                                    on b.seq_book = s.seq_book
+                                                        inner join tblTeacher t -- 교사 - 기초데이터*
+                                                            on t.seq_teacher = l.seq_teacher
+                                                                inner join tblPoint p -- 배점
+                                                                    on p.seq_opensubject = s.seq_opensubject
+                                                                        inner join tblScore sq -- 성적 점수
+                                                                            on s.seq_opensubject = sq.seq_opensubject and sq.seq_regist_course = r.seq_regist_course
+                                                                                inner join tblTest ts -- 시험
+                                                                                    on s.seq_opensubject = ts.seq_opensubject
+                                                                                         where se.student_name = '박경호' and substr(se.student_ssn,8,7) = '2436035';
+
+-- 원본의 view
+
+drop view vw153;
+create VIEW vw153 as
+select DISTINCT se.student_name,se.student_ssn,u.seq_subject as 과목번호, u.subject_name 과목이름, u.subject_period 과목기간,b.book_name 교재명, t.teacher_name 교사명,p.attendense_point 출결배점, p.written_test_point 필기배점,
+p.practical_test_point 실기배점,sq.attendence_score 출결점수, sq.written_test_score 필기점수, sq.practical_test_score 실기점수, ts.test_date "시험날짜"
+ 
+    from tblStudent se -- 교육생 - 기초데이터* 
+        inner join tblRegistCourse r -- 교육생 + 과정 - 수강 신청*
+            on se.seq_student = r.seq_student
+                inner join tblOpenCourse o--개설 과정
+                    on r.seq_opencourse = o.seq_opencourse
+                        inner join tblLecture l -- 교사 + 과정 - 강의
+                            on o.seq_opencourse = l.seq_opencourse
+                                inner join  tblOpenSubject s -- 개설 과목
+                                    on l.seq_lecture = s.seq_lecture
+                                        inner join tblSubject u -- 과목 - 기초데이터
+                                            on s.seq_subject = u.seq_subject
+                                                inner join tblBook b -- 교재 - 기초데이터
+                                                    on b.seq_book = s.seq_book
+                                                        inner join tblTeacher t -- 교사 - 기초데이터*
+                                                            on t.seq_teacher = l.seq_teacher
+                                                                inner join tblPoint p -- 배점
+                                                                    on p.seq_opensubject = s.seq_opensubject
+                                                                        inner join tblScore sq -- 성적 점수
+                                                                            on s.seq_opensubject = sq.seq_opensubject and sq.seq_regist_course = r.seq_regist_course
+                                                                                inner join tblTest ts -- 시험
+                                                                                    on s.seq_opensubject = ts.seq_opensubject;
+--과목번호, 과목명, 과목기간(시작 년월일, 끝 년월일), 교재명, 교사명, 과목별 배점 정보(출결, 필기, 실기 배점), 과목별 성적 정보(출결, 필기, 실기 점수), 과목별 시험날짜, 시험문제가 출력되어야 한다.
+create or replace PROCEDURE proc153(
+    pnum1 varchar2,
+    pnum2 varchar2,
+    presult out sys_refcursor
+)
+is
+begin
+open presult for
+select * from vw153
+where student_name = pnum1 and substr(student_ssn,8,7) = pnum2;
+end proc153;
+
+                                                                                    
+                                                                                    
+commit;
+
+
+
+-- 구현부
+set SERVEROUTPUT on;
+declare
+    presult sys_refcursor;
+    vrow vw153%rowtype;
+begin
+    
+    proc153('박경호','2436035', presult);  
+
+    loop fetch presult into vrow;
+    
+    exit when presult%notfound;
+    dbms_output.put_line(vrow.과목이름);
+    
+    end loop;
+end;
+
+
+
+
+
+
+===========================================
+교육생 아이디 비밀번호 select 
+===========================================
+select student_name,substr(student_ssn,8,7) from tblstudent;
+
+
+
+

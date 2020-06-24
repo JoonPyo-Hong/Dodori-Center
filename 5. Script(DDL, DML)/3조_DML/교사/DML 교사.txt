@@ -1,0 +1,422 @@
+===========================================
+교사 스케쥴 확인
+===========================================
+create or replace procedure proc116(
+    pnum number,
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+
+        select
+            tt.teacher_name,
+            tc.course_name,
+            toc.course_start_date,
+            toc.course_finish_date,
+            tsc.subject_name,
+            tos.seq_opensubject,
+            tb.book_name,
+            tos.subject_start_date,
+            tos.subject_finish_date,
+            case
+                when tos.subject_start_date <= sysdate and tos.subject_finish_date >= sysdate then '강의중'
+                when tos.subject_start_date > sysdate then '강의예정'
+                when tos.subject_finish_date < sysdate then '강의종료'
+            end
+        from tblLecture tl
+            inner join tblTeacher tt
+                on tt.seq_teacher = tl.seq_teacher
+                    inner join tblCourse tc
+                        on tc.seq_course = tl.seq_opencourse
+                            inner join tblOpenCourse toc
+                                on toc.seq_opencourse = tl.seq_opencourse
+                                    inner join tblOpenSubject tos
+                                        on tos.seq_lecture = tl.seq_lecture
+                                            inner join tblOpenCourseSubject tocs
+                                                on tocs.seq_opensubject = tos.seq_opensubject
+                                                    inner join tblSubject tsc
+                                                        on tsc.seq_subject = tos.seq_subject
+                                                            inner join tblBook tb
+                                                                on tb.seq_book = tos.seq_book
+                                    where tt.seq_teacher = pnum;
+
+end; 
+
+==========================================================================
+강의 스케줄 정보 출력 시 과목번호, 과정명, 과정기간(시작 년월일, 끝 년월일), 강의실과 과목명, 과목기간(시작 년월일, 끝 년월일), 교재명,"교육생 등록 인원"을 확인가능
+==========================================================================
+
+create or replace procedure  proc118Count(
+    pteacherNum number,
+    psubjectNum number,
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+        select 
+             count(*)
+        from tblRegistCourse trc
+            inner join tblOpenCourse toc
+                on trc.seq_opencourse = toc.seq_opencourse
+                    inner join tblLecture tl
+                        on tl.seq_opencourse = toc.seq_opencourse
+                            inner join tblOpenCourseSubject tocs
+                                on tocs.seq_opencourse = toc.seq_opencourse
+        where tl.seq_teacher = pteacherNum and tocs.seq_opensubject = psubjectNum; 
+end;
+
+
+===============================================================================
+특정 과목을 과목번호로 선택 시 해당 과정에 등록된 교육생 정보(교육생 이름, 전화번호, 등록일, 수료 또는 중도탈락)을 확인
+===============================================================================
+create or replace procedure proc119new(
+    pnum in number,--과목번호
+    pteacherNum in number,--선생번호
+    presult out sys_refcursor--아웃커서
+)
+is
+begin
+    open presult for 
+
+select
+    tos.seq_opensubject,
+    tbs.subject_name,
+    trc.seq_student as 학생번호,
+    ts.student_name as 이름,
+    ts.student_tel as 전화번호,
+    trc.regist_date as 등록일,
+    trc.resist_course_state as 수료상태
+    from tblStudent ts
+        inner join tblRegistCourse trc
+            on ts.seq_student = trc.seq_student
+                inner join tblStudyGroup tsg
+                    on tsg.seq_regist_course = trc.seq_regist_course
+                        inner join tblOpenCourse toc
+                            on toc.seq_opencourse = trc.seq_opencourse
+                                inner join tblOpenCourseSubject tocs
+                                    on tocs.seq_opencourse = toc.seq_opencourse
+                                        inner join tblOpenSubject tos
+                                            on tos.seq_opensubject = tocs.seq_opensubject
+                                                inner join tblSubject tbs
+                                                    on tbs.seq_subject = tos.seq_subject
+                                                        inner join tblLecture tl
+                                                            on tl.seq_lecture = tos.seq_lecture
+                                                        where tos.seq_opensubject = pnum--여기 변수가 되어야한다
+                                                            and tl.seq_teacher = pteacherNum
+                                                            order by seq_opensubject;  
+end;
+
+
+
+===============================================================================
+배점 입출력 보기
+===============================================================================
+
+create or replace procedure proc121print(
+    pnum number,
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for 
+        select * from vw121print
+                where subject_finish_date < sysdate
+                    and seq_teacher = pnum;     
+end;
+
+===============================================================================
+배점 입출력 수정
+===============================================================================
+
+create or replace procedure proc121input
+(
+    pnum number,-- 과목번호
+    pattend number,
+    pwrite number,
+    ppractical number
+    
+)
+is
+begin
+   update tblPoint tp set attendense_point = pattend where tp.seq_opensubject = pnum;
+   update tblPoint tp set written_test_point = pwrite where tp.seq_opensubject = pnum;
+   update tblPoint tp set practical_test_point = ppractical where tp.seq_opensubject = pnum;
+end;
+
+===============================================================================
+시험날짜 조회
+===============================================================================
+
+create or replace procedure proc122search(
+    pteacherNum number,--교사번호
+    presult out sys_refcursor--커서 반환
+)
+is
+begin
+    open presult for 
+    select 
+        tos.seq_opensubject,
+        tbt.teacher_name,
+        tt.test_date,
+        tos.subject_finish_date,
+        ts.subject_name
+    from tblOpenSubject tos
+        inner join tblTest tt
+            on tt.seq_opensubject = tos.seq_opensubject
+                inner join tblLecture tl
+                    on tl.seq_lecture = tos.seq_lecture
+                        inner join tblTeacher tbt
+                            on tbt.seq_teacher = tl.seq_teacher
+                                inner join tblSubject ts
+                                    on ts.seq_subject = tos.seq_subject
+                    where tl.seq_teacher = pteacherNum; 
+end;
+
+
+===============================================================================
+시험날짜 등록
+===============================================================================
+
+create or replace procedure proc122(--시험문제 등록!
+    pnum1 number,--선생번호
+    pnum2 number,--열린 과목 번호
+    pyear varchar2,
+    pmonth varchar2,
+    pdate varchar2
+)
+is
+    cursor vcursor is 
+            select
+            tos.seq_opensubject,
+            tbt.seq_teacher
+        from tblOpenSubject tos
+            inner join tblTest tt
+                on tt.seq_opensubject = tos.seq_opensubject
+                    inner join tblLecture tl
+                        on tl.seq_lecture = tos.seq_lecture
+                            inner join tblTeacher tbt
+                                on tbt.seq_teacher = tl.seq_teacher
+                                    inner join tblSubject ts
+                                        on ts.seq_subject = tos.seq_subject
+                            where tbt.seq_teacher = pnum1;
+                            
+
+    vsubject number;
+    vteacher number;
+    vnum number := 0;
+begin
+    open vcursor;
+    loop
+        fetch vcursor into vsubject,vteacher;
+
+        exit when vcursor%notfound;
+
+
+        if vsubject = pnum2 and  vteacher = pnum1 then
+            update tblTest set test_date = to_date(pyear||pmonth||pdate,'yyyymmdd') where seq_opensubject = vsubject;
+            vnum := vnum + 1;
+        end if;
+
+    end loop;
+
+    close vcursor;  
+end;
+
+===============================================================================
+성적출력
+===============================================================================
+
+create or replace procedure proc127GradeSearch
+(
+    psubNum number,--과목 번호
+    pstdNum number, -- 학생 번호
+    presult out sys_refcursor--내보내기
+)
+is
+begin
+    open presult for
+        select
+    tbs.seq_student,-- 학생 번호
+    tbs.student_name,--학생 이름
+    ts.attendence_score,--출석 점수
+    ts.written_test_score,--필기 점수
+    ts.practical_test_score,--실기 점수
+    tsb.subject_name--과목명
+    from tblRegistCourse trc
+    inner join tblScore ts
+        on trc.seq_regist_course = ts.seq_regist_course
+            inner join tblOpenSubject tos
+                on tos.seq_opensubject = ts.seq_opensubject
+                    inner join tblStudent tbs 
+                        on tbs.seq_student = trc.seq_student
+                            inner join tblSubject tsb
+                                on tsb.seq_subject = tos.seq_subject
+                    where tos.seq_opensubject = psubNum and trc.seq_student = pstdNum;
+end;
+
+===============================================================================
+특정과목 소속 학생정보
+===============================================================================
+
+create or replace procedure proc129StudentInfo (
+    pteachernum number,-- 교사 번호
+    psubjectnum number,-- 과목번호
+    presult out sys_refcursor
+
+)
+is
+begin
+    open presult for
+        select  
+        tos.seq_opensubject,--과목번호
+    ts.subject_name,--과목명
+    tbs.seq_student,--학생 번호
+    tbs.student_name,--학생 이름
+    tbs.student_tel,--학생 전화번호
+    tbs.major,--학생 전공
+    tos.subject_finish_date--과목종료날짜
+from tblRegistCourse trc
+    inner join tblOpenCourse toc
+        on toc.seq_opencourse = trc.seq_opencourse
+            inner join tblOpenCourseSubject tocs
+                on tocs.seq_opencourse = toc.seq_opencourse
+                    inner join tblOpenSubject tos
+                        on tos.seq_opensubject = tocs.seq_opensubject
+                            inner join tblLecture tl
+                                on tl.seq_opencourse = toc.seq_opencourse
+                                    inner join tblSubject ts
+                                        on ts.seq_subject = tos.seq_subject
+                                            inner join tblStudent tbs
+                                                on tbs.seq_student = trc.seq_student
+                                    where tl.seq_teacher = pteachernum
+                                        and tos.seq_opensubject = psubjectnum;
+end;
+===============================================================================
+특정과목 소속 학생 성적정보
+===============================================================================
+create or replace procedure proc129Grade
+(
+    pnum number,
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+        select * from vw129Grade
+            where seq_teacher = pnum;
+end;
+
+===============================================================================
+교육생 출결조회
+===============================================================================
+create or replace procedure proc135course
+(
+   pteacherNum number,--선생번호
+   pcourseNum number,--과정번호
+   pstartYear varchar2,--시작년도
+   pstartMon varchar2,--시작월
+   pstartDate varchar2,--시작일
+   pendYear varchar2,--끝년
+   pendMon varchar2,--끝월
+   pendDate varchar2,--끝일
+   presult out sys_refcursor
+)
+is
+begin
+    open presult for
+        select
+    ts.seq_student,--학생번호
+    ts.student_name,--학생이름
+    ta.attendence_date,--출석날
+    ta.in_time,--온시간
+    ta.out_time,--나간시간
+    ta.attendense_state,--출석상태
+    toc.course_start_date,--과정시작날짜
+    toc.course_finish_date,--과정종료날짜
+    toc.seq_opencourse,--과정번호
+    tbc.course_name--과정명
+from tblStudent ts
+    inner join tblRegistCourse trc
+        on ts.seq_student = trc.seq_student
+            inner join tblAttendence ta
+                on ta.seq_regist_course = trc.seq_regist_course
+                    inner join tblOpenCourse toc
+                        on toc.seq_opencourse = trc.seq_opencourse
+                            inner join tblLecture tl
+                                on tl.seq_opencourse = toc.seq_opencourse
+                                    inner join tblOpenSubject tos
+                                        on tos.seq_lecture = tl.seq_lecture
+                                            inner join tblSubject tbs
+                                                on tbs.seq_subject = tos.seq_subject
+                                                    inner join tblCourse tbc
+                                                        on tbc.seq_course = toc.seq_course
+                                                    where seq_teacher = pteacherNum and toc.seq_opencourse = pcourseNum
+                                                        and toc.course_start_date >= to_date(pstartYear || pstartMon || pstartDate,'yyyymmdd')
+                                                        and toc.course_finish_date <= to_date(pendYear || pendMon || pendDate,'yyyymmdd');
+
+end;
+
+
+===============================================================================
+담당교사가 어떤 과정을 맡고있는지 조회
+===============================================================================
+create or replace procedure proc135whatcourse 
+(
+    ptecherNum number,--선생번호
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+    select
+    toc.seq_opencourse,--과정번호
+    toc.course_start_date,--과정 시작일
+    toc.course_finish_date,-- 과정 종료일
+    tc.course_period,--과정 기간
+    tc.course_name--과정 이름
+from tblCourse tc
+    inner join tblOpenCourse toc
+        on toc.seq_course = tc.seq_course
+            inner join tblLecture tl
+                on tl.seq_opencourse = toc.seq_opencourse
+                    where tl.seq_teacher = ptecherNum;
+end;
+===============================================================================
+과목별 조회
+===============================================================================
+create or replace procedure proc137subject
+(
+    psub number,--과목번호
+    pstd number,--학생번호
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+        select
+    tbs.seq_student,--학생번호
+    tbs.student_name,--학생이름
+    ta.attendence_date,--출석날짜
+    ta.in_time,--도착 시간
+    ta.out_time,--나간 시간
+    ta.attendense_state,--출석 상태
+    ts.subject_name--과목 이름
+
+from tblSubject ts
+    inner join tblOpenSubject tos 
+        on ts.seq_subject = tos.seq_subject
+            inner join tblLecture tl
+                on tl.seq_lecture = tos.seq_lecture
+                    inner join tblOpenCourse toc
+                        on toc.seq_opencourse = tl.seq_opencourse
+                            inner join tblRegistCourse trc
+                                on trc.seq_opencourse = toc.seq_opencourse
+                                    inner join tblAttendence ta
+                                        on ta.seq_regist_course = trc.seq_regist_course
+                                            inner join tblStudent tbs
+                                                on tbs.seq_student = trc.seq_student
+                                                    where tos.seq_opensubject = psub and tbs.seq_student = pstd
+                                                        and (ta.attendence_date >= tos.subject_start_date and ta.attendence_date <= tos.subject_finish_date);                                                   
+end;

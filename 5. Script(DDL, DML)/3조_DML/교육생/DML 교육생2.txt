@@ -1,0 +1,172 @@
+===========================================
+교육생 동아리정보 조회
+===========================================
+===========================================
+동아리목록(동아리 번호, 동아리명)을 조회한다.
+===========================================
+create or replace view vwStudentStudyGroup178
+as
+select DISTINCt osg. "학생번호",  st.student_name as "학생명", 
+osg.study_group_name as "동아리명", sg.state_study_group as "상태"
+from tblStudent st
+    inner join tblRegistCourse r
+        on st.seq_student = r.seq_student
+            inner join tblStudyGroup sg
+                on r.seq_regist_course = sg.seq_regist_course 
+                    inner join tblOpenStudyGroup osg
+                        on sg.seq_open_study_group = osg.seq_open_study_group;
+
+
+rollback;
+--원래 인기순으로 order by 해서 출력되어야 함
+commit;
+drop view vwStudentStudyGroup; -- 드롭하고 위 번호 추가된 걸로 다시 생성하기
+select * from vwStudentStudyGroup178 where 학생명 = '박경호';                   
+===========================================
+동아리 가입기준 확인
+===========================================
+===========================================
+동아리목록 -> 번호 선택시 동아리 가입 기준을 확인한다.
+===========================================
+create or replace view vwStudyStandard179
+as
+select distinct osg.study_group_name as "동아리명", osg.seq_open_study_group as "동아리번호" ,ss.study_standard as "가입기준" 
+from tblOpenStudyGroup osg 
+    inner join tblStudyStandard ss
+        on osg.seq_open_study_group = ss.seq_open_study_group
+            inner join tblStudyGroup sg
+                on osg.seq_open_study_group = sg.seq_open_study_group
+                    inner join tblRegistCourse r 
+                        on sg.seq_regist_course = r.seq_regist_course
+                            inner join tblStudent st
+                                on r.seq_student = st.seq_student order by 동아리번호;
+                                
+                                
+select * from vwStudyStandard179 where "동아리명" = '쌍용과 함께';
+
+
+===========================================
+동아리 근태 상황 조회
+===========================================
+===========================================
+동아리 근태 상황을 조회한다.(날짜, 근태상황)
+===========================================
+
+create or replace view vwstudygroupattendence175
+as
+select st.student_name as "학생명", osg.study_group_name as "동아리명", sga.study_group_attendence_date as "동아리 모임 날짜", sga.study_group_attendence_state as "근태" from tblStudyGroupAttendence sga
+    inner join tblStudyGroup sg
+        on sga.seq_study_group = sg.seq_study_group
+            inner join tblRegistCourse r 
+                on sg.seq_regist_course = r.seq_regist_course
+                    inner join tblStudent st
+                        on r.seq_student = st.seq_student
+                            inner join tblOpenStudyGroup osg
+                                on sg.seq_open_study_group = osg.seq_open_study_group;
+
+select * from vwstudygroupattendence175 where 학생명 = '노덕름';
+select * from tblstudent where student_name = '노덕름';
+
+===========================================
+동아리 가입 신청
+===========================================
+===========================================
+동아리번호를 입력받아 가입신청함(가입 '대기'상태)
+===========================================
+create or replace procedure proc18901(
+    pnum number,  -- 학생 번호 
+    psgnum number  -- 동아리 번호
+    
+)
+is 
+    pregistnum number; -- 넣어줄 수강신청 번호를 학생번호로 불러와서 변수에 저장
+begin
+    select r.seq_regist_course into pregistnum from tblstudent st 
+    inner join tblRegistCourse r 
+    on st.seq_student = r.seq_student where r.seq_student = pnum;
+    insert into tblStudyGroup values ((select max(seq_study_group) +1 from tblStudyGroup), psgnum, '대기', pregistnum);
+    
+end;  
+
+--확인--
+declare 
+begin
+    proc180(1,1);
+end;
+
+commit;
+select seq_student from tblstudent where student_name = '박경호';
+
+select * from tblstudygroup;
+
+delete from tblstudygroup where seq_study_group = 241;
+
+===========================================
+동아리 탈퇴 신청
+===========================================
+===========================================
+나의 현재 동아리상태를 '탈퇴신청'으로 변경함.
+===========================================
+
+create or replace procedure proc181(
+    pnum number --교육생 번호
+)
+is 
+    pregistnum number; 
+begin
+    select r.seq_regist_course into pregistnum from tblstudent st 
+    inner join tblRegistCourse r 
+    on st.seq_student = r.seq_student where r.seq_student = pnum;
+    
+    update tblStudyGroup set state_study_group = '탈퇴신청' where seq_regist_course = pregistnum;   
+        
+end;
+
+declare 
+begin
+    proc181(1);
+end;
+
+rollback;
+
+select * from tblStudyGroup;
+===========================================
+동아리 스케줄 참석여부 update
+===========================================
+===========================================
+동아리 스케줄을 출력후 선택해서 동아리 참석 여부를 변경함.
+===========================================
+create or replace procedure proc182(
+    pname varchar2, --교육생 이름
+    pattend varchar2,
+    p varchar2
+)
+is 
+begin
+   
+    update vwstudygroupattendence175 set "근태" = pattend where "동아리 모임 날짜" = p and 학생명 = pname;    
+end;
+
+
+declare 
+begin
+    proc182('노덕름','참석','20/03/07');
+end;
+
+select * from tblstudent;
+commit
+
+
+
+
+select *
+from  tblOpenStudyGroup osg 
+    inner join tblStudyStandard p
+        on osg.seq_open_study_group = p.seq_open_study_group;
+                        
+select * from tblStudyStandard;
+
+                
+--------------------------------------------------------------------------------
+select * from tblStudyGroupSchedual;
+

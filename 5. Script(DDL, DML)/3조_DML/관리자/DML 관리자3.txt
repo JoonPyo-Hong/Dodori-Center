@@ -1,0 +1,228 @@
+===========================================
+동아리 가입기준을 입력한다.
+===========================================
+create or replace procedure proc190_insert(
+    pstandard varchar2,         --가입기준
+    pstudygroup number      --개설된 동아리그룹 번호
+)
+is
+begin
+    insert into tblStudyStandard values (seq_study_standard.nextVal, pstandard, pstudygroup);
+end;
+
+commit;
+===========================================
+동아리 가입기준을 삭제한다.
+===========================================
+create or replace procedure proc190_delete(
+    pnum number         --가입기준 기본키
+)
+is 
+begin
+    update tblstudystandard set study_standard = study_standard || '(삭제)' where seq_study_standard = pnum;
+end;
+
+
+commit;
+===========================================
+동아리 가입기준을 수정한다.
+===========================================
+create or replace procedure proc190_update_standard(
+    pnum number,            --수정데이터 기본키
+    pstandard varchar2      --수정할 가입기준 데이터
+)
+is
+begin
+    update tblStudyStandard set study_standard = pstandard where seq_study_standard = pnum;
+end;
+===========================================
+동아리 가입기준을 수정한다.
+===========================================
+create or replace procedure proc190_update_group(
+    pnum number,            --수정데이터 기본키
+    pgroup varchar2      --수정할 가입기준 데이터
+)
+is
+begin
+    update tblStudyStandard set seq_open_study_group = pgroup where seq_study_standard = pnum;
+end;
+
+
+commit;
+
+
+
+
+select * from tblStudyGroup;
+===========================================
+관리자가 교육생 동아리가입상태를 변경함 (가입대기->가입완료)
+===========================================
+create or replace procedure proc191(
+    pnum number,            --교육생 번호
+    pstate varchar2         --수정이 필요한 상태 입력
+)
+is
+    vstudentnum number;
+begin
+    select seq_regist_course into vstudentnum from tblRegistCourse rc inner join tblStudent s on s.seq_student = rc.seq_student where rc.seq_student = pnum;
+    update tblStudyGroup set state_study_group = pstate where seq_regist_course = vstudentnum;
+end;
+commit;
+
+select* from tblStudyGroupSchedual;
+
+===========================================
+동아리 스케쥴을 추가한다.
+===========================================
+
+create or replace procedure proc193(
+    pdate date,         --동아리스케줄 날짜
+    proom varchar2,         --동아리스케줄 장소
+    pcapacity number            --동아리 최대 수용인원
+)
+is
+begin
+    insert into tblStudyGroupSchedual values (seq_study_group_schedual.nextVal, pdate, proom, pcapacity);
+end;
+
+commit;
+
+===========================================
+교육생별로 동아리 스케줄 참여횟수 카운팅함.
+===========================================
+
+create or replace view vw194_student
+as
+select
+     rc.seq_student, 
+     count
+     (case
+        when sga.study_group_attendence_state = '참석' then 1
+      end) as 참석횟수
+from tblStudent s
+    inner join tblRegistCourse rc
+        on s.seq_student = rc.seq_student
+            inner join tblStudyGroup sg
+                on sg.seq_regist_course = rc.seq_regist_course
+                    inner join tblStudyGroupAttendence sga
+                        on sg.seq_study_group = sga.seq_study_group
+group by rc.seq_student
+order by rc.seq_student;
+commit;
+
+===========================================
+동아리별로 동아리출석 근태상황과 날짜를 출력할 수 있다.
+===========================================
+create or replace view vw194_studygroup
+as
+select sg.seq_open_study_group as 동아리이름,
+            count(
+                case
+                    when sga.study_group_attendence_state = '참석' then 1
+                end
+                ) as 참석횟수
+from tblOpenStudyGroup osg
+    inner join tblStudyGroup sg
+        on osg.seq_open_study_group = sg.seq_open_study_group
+            inner join tblStudyGroupAttendence sga
+                on sg.seq_study_group = sga.seq_study_group
+group by sg.seq_open_study_group
+order by 동아리이름;
+
+commit;
+
+
+===========================================
+동아리 출석을 보고 한달에 미참석 5번이상 한 사람-> 탈퇴상태로 변경 
+===========================================
+select * from vw194_student;
+
+
+create or replace procedure proc195(
+    presult out sys_refcursor
+)
+is
+begin
+    open presult for
+        select seq_student from vw194_student where 참석횟수 <= 5;
+end;
+
+
+
+===========================================
+교육생 번호를 받아옴.
+===========================================
+create or replace procedure proc195_out(
+    pnum number         --교육생 번호 받아오기
+)
+is
+    vattendence number;
+    vstudygroup number;
+begin
+    select distinct sg.seq_regist_course into vstudygroup 
+        from tblRegistCourse rc 
+            inner join tblStudyGroup sg
+                on rc.seq_regist_course = sg.seq_regist_course
+        where seq_student = pnum;
+        
+        select distinct sga.seq_study_group into vattendence
+            from tblStudyGroup sg
+                inner join tblStudyGroupAttendence sga
+                    on sg.seq_study_group = sga.seq_study_group
+            where sg.seq_regist_course = vstudygroup;
+            
+        update tblStudyGroupAttendence set study_group_attendence_state = '탈퇴' where seq_study_group = vattendence;
+        
+end;
+
+
+commit;
+
+
+begin
+    proc195_out(212);
+end;
+rollback;
+
+select * from vwstudygroupattendence175;
+select * from tblstudent where student_name = '정시정';
+delete from tblOpenCourse where seq_opencourse = 77;
+select * from tblOpenCourse;
+
+commit;
+select * from tblmanager;
+
+
+
+delete from tblStudyGroup where seq_study_group = 244;
+
+
+commit;
+-- s.student_name,t.study_group_attendence_date, t.study_group_attendence_state
+select  distinct study_group_name, student_name,
+        sga.study_group_attendence_date , sga.study_group_attendence_state
+    from tblStudent s inner join tblregistcourse r on s.seq_student = r.seq_student
+	         		       inner join tblstudygroup g on g.seq_regist_course = r.seq_regist_course
+	         		           inner join tblStudyGroupSchedualAttend z on z.seq_study_group =g.seq_study_group
+                                inner join tblStudyGroupSchedual s on s.seq_study_group_schedual = z.seq_study_group_schedual
+                                    inner join tblOpenStudyGroup osg on osg.seq_open_study_group = g.seq_open_study_group
+                                        inner join tblStudyGroupAttendence sga on sga.seq_study_group = g.seq_study_group
+                                            order by study_group_name;
+                                            
+                                            
+                                            
+                                            
+                                            
+      select * from tblmanager;                                     
+      
+                                            
+                                            
+                                            
+                                            
+select student_name, study_group_attendence_state, study_group_attendence_date from tblStudyGroupAttendence sga
+    inner join tblStudyGroup sg on sga.seq_study_group = sg.seq_study_group
+        inner join tblRegistCourse rc on rc.seq_regist_course = sg.seq_regist_course
+            inner join tblStudent s on s.seq_student = rc.seq_student;
+            
+            
+             select * from vw73_1 order by 과정명;

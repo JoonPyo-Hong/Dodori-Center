@@ -1,0 +1,287 @@
+===========================================
+교육생 중도탈락 업데이트
+===========================================
+create or replace procedure proc92(
+    pstudentnum number,         --update할 교육생 번호 입력
+    pregiststate varchar2,          --수료 및 중도탈락값 입력
+    pstatedate date                        --수료 및 중도탈락 날짜 입력
+)
+is
+begin
+    update tblRegistCourse set p_date_s_date = to_date(pstatedate,'yy-mm-dd') where seq_student = pstudentnum;
+    update tblRegistCourse set resist_course_state = pregiststate where seq_student = pstudentnum;
+end;
+
+===========================================
+교육생 신규등록
+===========================================
+create or replace procedure proc88mod(
+    pname varchar2,         --교육생 이름
+    pssn varchar2,          --교육생 주민번호
+    ptel varchar2,              --교육생 전화번호
+    pmajor varchar2            --교육생 전공
+)
+is
+begin
+  insert into tblStudent values ((select max(seq_student)+1 from tblStudent), pname, pssn, ptel, pmajor);
+ 
+end;
+
+===========================================
+교육생 정보수정
+===========================================
+create or replace procedure proc93UpdateMod(
+    pnum number,            --수정할 교육생번호 입력
+    pname varchar2,          --수정할 교육생 이름 입력
+    pssn varchar2,              --수정할 교육생 주민등록번호 입력
+    ptel varchar2,                 --수정할 전화번호 입력
+    pmajor varchar2                 --수정할 전공 입력
+    
+)
+is
+begin
+    update tblStudent set student_name = pname where seq_student = pnum;
+    update tblStudent set student_ssn = pssn where seq_student = pnum;
+    update tblStudent set student_tel = ptel where seq_student = pnum;
+    update tblStudent set major = pmajor where seq_student = pnum;
+    
+end;
+
+
+===========================================
+모든 개설과정 출력
+===========================================
+create or replace view vwOpenCourse95
+as
+select oc.seq_opencourse as "개설과정번호", c.course_name as "개설과정명",
+to_char(oc.course_start_date, 'yyyy-mm-dd') as "과정시작일", 
+to_char(oc.course_finish_date, 'yyyy-mm-dd') as "과정종료일"
+from tblOpenCourse oc 
+inner join tblCourse c 
+on oc.seq_course = c.seq_course order by oc.seq_opencourse; 
+
+===========================================
+성적등록 여부 출력
+===========================================
+create or replace view vwtestScoreRegistCheck95
+as
+select 
+distinct sb.subject_name as "개설과목명" , st.student_name as "학생명", 
+oc.seq_opencourse as "개설과정번호", c.course_name as "개설과정명",
+case 
+    when sc.written_test_score is null then '미등록'
+    when sc.written_test_score is not null then '등록완료'
+end as "필기성적 등록여부",
+case 
+    when sc.practical_test_score is null then '미등록'
+    when sc.practical_test_score is not null then '등록완료'
+end as "실기성적 등록여부"  
+from tblOpenCourse oc 
+    inner join tblCourse c 
+        on oc.seq_course = c.seq_course 
+            inner join tblOpenCourseSubject ocs
+                on ocs.seq_opencourse = oc.seq_opencourse
+                    inner join tblOpenSubject os
+                        on ocs.seq_opensubject = os.seq_opensubject
+                            inner join tblsubject sb
+                                    on os.seq_subject = sb.seq_subject
+                                         inner join tblScore sc
+                                                on os.seq_opensubject = sc.seq_opensubject
+                                                    inner join tblRegistCourse r
+                                                         on r.seq_regist_course = sc.seq_regist_course
+                                                            inner join tblStudent st
+                                                                on r.seq_student = st.seq_student;
+===========================================                                                              
+과목별 성적 출력
+===========================================
+create or replace view vwScoreSubject97
+as                                                                                                                                                                                             
+select s.seq_subject as "과목번호", u.subject_name as "개설과목명", s.subject_start_date as "과목시작일",  s.subject_finish_date as "과목종료일", 
+o.seq_opencourse as "개설과정번호", c.course_name as "개설과정명", to_char(o.course_start_date,'yyyy-mm-dd') as "과정시작일",  to_char(o.course_finish_date, 'yyyy-mm-dd') as "과정종료일",  
+se.seq_student as "교육생번호" , se.student_name as "교육생명", substr(se.student_ssn, 8,7) as "주민번호 뒷자리", cr.classroom_name as "강의실명", 
+u.subject_period as "과목기간",b.book_name as "교재명", t.teacher_name as "교사명",sq.attendence_score as "출결점수", 
+sq.written_test_score as "필기점수", sq.practical_test_score as "실기점수", ts.test_date as "시험날짜"
+    from tblStudent se -- 교육생 - 기초데이터* 
+        inner join tblRegistCourse r -- 교육생 + 과정 - 수강 신청*
+            on se.seq_student = r.seq_student
+                inner join tblOpenCourse o--개설 과정
+                    on r.seq_opencourse = o.seq_opencourse
+                        inner join tblClassroom cr --교실 기초
+                            on cr.seq_classroom = o.seq_classroom
+                                inner join tblCourse c --과정기초
+                                    on o.seq_course = c.seq_course
+                                        inner join tblLecture l -- 교사 + 과정 - 강의
+                                            on o.seq_opencourse = l.seq_opencourse
+                                                inner join  tblOpenSubject s -- 개설 과목
+                                                    on l.seq_lecture = s.seq_lecture
+                                                        inner join tblSubject u -- 과목 - 기초데이터
+                                                            on s.seq_subject = u.seq_subject
+                                                                inner join tblBook b -- 교재 - 기초데이터
+                                                                    on b.seq_book = s.seq_book
+                                                                        inner join tblTeacher t -- 교사 - 기초데이터*
+                                                                            on t.seq_teacher = l.seq_teacher
+                                                                                inner join tblPoint p -- 배점
+                                                                                    on p.seq_opensubject = s.seq_opensubject
+                                                                                        inner join tblScore sq -- 성적 점수
+                                                                                            on s.seq_opensubject = sq.seq_opensubject and sq.seq_regist_course = r.seq_regist_course
+                                                                                                inner join tblTest ts -- 시험
+                                                                                                    on s.seq_opensubject = ts.seq_opensubject;                                                                      
+
+===========================================
+출결 조회 : 학생별, 개설 과정별(개설 과정번호, 개설 과정명) 조회
+===========================================
+create or replace view vwAttendence101
+as
+select oc.seq_opencourse as "과정번호", c.course_name as "과정명", to_char(at.attendence_date,'yyyy-mm-dd') as "출결일",
+st.seq_student as "교육생번호", st.student_name as "교육생명", at.attendense_state as "근태" 
+from tblStudent st
+    inner join tblRegistCourse r
+        on st.seq_student = r.seq_student
+            inner join tblAttendence at
+                on r.seq_regist_course = at.seq_regist_course
+                    inner join tblOpenCourse oc
+                        on r.seq_opencourse = oc.seq_opencourse 
+                            inner join tblCourse c
+                                on oc.seq_course = c.seq_course;
+                        
+
+
+===========================================
+교육생 동아리정보 조회
+===========================================
+create or replace view vwStudentStudyGroup178
+as
+select st.student_name as "학생명", st.seq_student as "학생번호", 
+osg.study_group_name as "동아리명", sg.state_study_group as "상태"
+from tblStudent st
+    inner join tblRegistCourse r
+        on st.seq_student = r.seq_student
+            inner join tblStudyGroup sg
+                on r.seq_regist_course = sg.seq_regist_course 
+                    inner join tblOpenStudyGroup osg
+                        on sg.seq_open_study_group = osg.seq_open_study_group;
+
+===========================================
+동아리 가입기준 확인
+===========================================
+create or replace view vwStudyStandard179
+as
+select distinct osg.study_group_name as "동아리명", osg.seq_open_study_group as "동아리번호" ,ss.study_standard as "가입기준" 
+from tblOpenStudyGroup osg 
+    inner join tblStudyStandard ss
+        on osg.seq_open_study_group = ss.seq_open_study_group
+            inner join tblStudyGroup sg
+                on osg.seq_open_study_group = sg.seq_open_study_group
+                    inner join tblRegistCourse r 
+                        on sg.seq_regist_course = r.seq_regist_course
+                            inner join tblStudent st
+                                on r.seq_student = st.seq_student order by 동아리번호;
+                                
+===========================================
+동아리 가입 신청
+===========================================
+create or replace procedure proc180(
+    pnum number,  --  
+    psgnum number  --
+    
+)
+is 
+    pregistnum number; -- 넣어줄 수강신청 번호를 학생번호로 불러와서 변수에 저장
+begin
+    select r.seq_regist_course into pregistnum from 
+        tblstudent st inner join 
+            tblRegistCourse r on st.seq_student = r.seq_student where r.seq_student = PNUM;
+    insert into tblStudyGroup values (seq_study_group.nextval, pregistnum, '대기', psgnum);
+end;  
+
+===========================================
+확인
+===========================================
+declare 
+begin
+    proc180(1,1);
+end;
+
+===========================================
+동아리 탈퇴 신청
+===========================================
+create or replace procedure proc181(
+    pnum number --교육생 번호
+)
+is 
+    pregistnum number; 
+begin
+    select r.seq_regist_course into pregistnum from tblstudent st 
+    inner join tblRegistCourse r 
+    on st.seq_student = r.seq_student where r.seq_student = pnum;
+    
+    update tblStudyGroup set state_study_group = '탈퇴신청' where seq_regist_course = pregistnum;   
+        
+end;
+
+declare 
+begin
+    proc181(1);
+end;
+
+select * from tblStudyGroup;
+===========================================
+동아리 스케줄 참석여부 update
+===========================================
+create or replace procedure proc182(
+    pname varchar2, --교육생 이름
+    pattend varchar2,
+    p varchar2
+)
+is 
+begin
+   
+    update vwstudygroupattendence175 set "근태" = pattend where "동아리 모임 날짜" = p and 학생명 = pname;    
+end;
+               
+
+declare 
+begin
+    proc182(1,'불참석');
+end;
+===========================================
+동아리 근태 상황 조회
+===========================================
+create or replace view vwstudygroupattendence175
+as
+select st.student_name as "학생명", osg.study_group_name as "동아리명", sga.study_group_attendence_date as "동아리 모임 날짜", sga.study_group_attendence_state as "근태" from tblStudyGroupAttendence sga
+    inner join tblStudyGroup sg
+        on sga.seq_study_group = sg.seq_study_group
+            inner join tblRegistCourse r 
+                on sg.seq_regist_course = r.seq_regist_course
+                    inner join tblStudent st
+                        on r.seq_student = st.seq_student
+                            inner join tblOpenStudyGroup osg
+                                on sg.seq_open_study_group = osg.seq_open_study_group;
+===========================================
+동아리별 취업 학생수
+===========================================
+create or replace view vwdongarijob
+as
+select count(sg.seq_open_study_group) as "취업학생수" , sg.seq_open_study_group as "동아리번호"
+    from tblcompany c 
+        inner join tbljobinfo j 
+            on c.seq_company = j.seq_company
+                inner join tblStudyGroup sg
+                    on sg.seq_study_group = j.seq_study_group
+                        inner join tblOpenStudyGroup osg
+                            on sg.seq_open_study_group = osg.seq_open_study_group
+                                inner join tblRegistCourse r
+                                    on sg.seq_regist_course = r.seq_regist_course
+                                        inner join tblStudent st
+                                            on r.seq_student = st.seq_student group by sg.seq_open_study_group;
+
+===========================================
+동아리 원수
+===========================================
+select count(osg.seq_open_study_group) as 동아리원수, osg.seq_open_study_group as 동아리번호
+    from tblOpenStudyGroup osg 
+        inner join tblStudyGroup sg 
+            on osg.seq_open_study_group = sg.seq_open_study_group 
+                group by osg.seq_open_study_group;
+

@@ -1,0 +1,490 @@
+﻿---------------------------------------
+-- 관리자
+----------------------------------------
+create table tblManager
+(
+
+seq_manager NUMBER	primary key NOT NULL,               --번호(PK)
+id	VARCHAR2(15)	NOT NULL,                                                --아이디
+pass	VARCHAR2(30)	NOT NULL                                         --비밀번호
+);
+create sequence seq_manager;
+
+drop table tblManager;
+drop sequence seq_manager;
+
+select * from tblManager;
+
+---------------------------------------
+-- 과정 기초데이터
+----------------------------------------
+create table tblCourse
+(
+    seq_course number primary key,          -- 번호(PK)
+    course_name varchar2(100) not null,     -- 과정명
+    course_period number not null           -- 수료기간
+);
+
+create sequence seq_course;         -- tblCourse 테이블의 기본키
+
+
+drop table tblCourse;
+drop sequence seq_course;
+
+select * from tblCourse;
+
+
+---------------------------------------
+-- 과목 기초데이터
+----------------------------------------
+create table tblSubject
+(
+    seq_subject number primary key,             -- 번호(PK)
+    subject_name varchar2(50) not null,         -- 과목명
+    subject_period number not null                  -- 과목 기간
+);
+
+create sequence seq_subject;            --tblSubject 테이블의 기본키
+
+drop table tblSubject;
+drop sequence seq_subject;
+
+select * from tblSubject;
+
+
+---------------------------------------
+-- 교사 기초데이터
+----------------------------------------
+create table tblTeacher
+(
+seq_teacher NUMBER primary key NOT NULL,            --번호(PK)
+teacher_name	VARCHAR2(15)	NOT NULL,                   --이름
+teacher_ssn	VARCHAR2(50)	NOT NULL,                       --주민번호
+teacher_tel	VARCHAR2(50)	NOT NULL                        --전화번호
+);
+create sequence seq_teacher;                --tblTeacher 테이블의 기본키
+
+drop table tblTeacher;
+drop sequence seq_teacher;
+
+select * from tblTeacher;
+
+---------------------------------------
+-- 강의 가능과목(교사 + 과목) 데이터
+----------------------------------------
+create table tlbPossibleCourseSubject
+(
+seq_possible_course_subject NUMBER	primary key NOT NULL,                   --번호(PK)
+seq_teacher NUMBER references tblTeacher(seq_teacher)	NULL,           --교사번호(FK)
+seq_subject NUMBER references tblSubject(seq_subject) 	NULL                --과목 번호(FK)
+);
+ create sequence seq_possible_course_subject;                   --tlbPossibleCourseSubject 테이블의 기본키
+
+
+drop table tlbPossibleCourseSubject;
+drop sequence seq_possible_course_subject;
+
+select * from tlbPossibleCourseSubject;
+
+---------------------------------------
+-- 과정에 속한 과목 데이터
+----------------------------------------
+create table tblSubjectCourse
+(
+    seq_subjectcourse number primary key,                                                       -- 번호(PK)
+    seq_course number references tblCourse(seq_course) not null,              -- 과정번호(FK)
+    seq_subject number references tblSubject(seq_subject) not null              -- 과목 번호(FK)
+);
+
+create sequence seq_subjectcourse;          -- tblSubjectCourse 테이블의 기본키
+
+drop table tblSubjectCourse;
+drop sequence seq_subjectcourse;
+
+select * from tblSubjectCourse;
+
+---------------------------------------
+-- 교재 기초데이터
+----------------------------------------
+create table tblBook
+(
+    seq_book number primary key,                    -- 번호(PK)
+    book_name varchar2(50) not null,                -- 교재명
+    publisher varchar2(50) not null                      -- 출판사
+);
+
+create sequence seq_book;                   --tblBook 테이블의 기본키
+
+drop table tblBook;
+drop sequence seq_book;
+
+select * from tblBook;
+
+---------------------------------------
+-- 강의실 기초데이터
+----------------------------------------
+create table tblClassroom
+(
+seq_classroom NUMBER	primary key NOT NULL,           --번호(PK)
+classroom_name	VARCHAR2(15)	NOT NULL,                   --강의실명
+classroom_capacity	NUMBER	NOT NULL                            --수용정원
+);
+create sequence seq_classroom;                  --tblClassroom 테이블의 기본키
+
+drop table tblClassroom;
+drop sequence seq_classroom;
+
+select * from tblClassroom;
+
+
+---------------------------------------
+-- 개설 과정 데이터
+----------------------------------------
+create table tblOpenCourse
+(
+seq_opencourse NUMBER	primary key NOT NULL,                       --번호(PK)
+course_start_date	DATE	NOT NULL,                                                       --과정 시작 날짜
+course_finish_date	DATE	NOT NULL,                                                   --과정 종료 날짜
+seq_classroom NUMBER	references tblClassroom(seq_classroom) NOT NULL,            --강의실(FK)
+seq_course NUMBER	references tblCourse(seq_course) NOT NULL                                  --과정 번호(FK)
+);
+create sequence seq_opencourse;
+
+drop table tblOpenCourse;
+drop sequence seq_opencourse;
+
+select * from tblOpenCourse;
+
+commit;
+
+---------------------------------------
+-- 강의 데이터(교사 + 과정)
+----------------------------------------
+create table tblLecture
+(
+seq_lecture NUMBER	primary key NOT NULL,               --번호(PK)
+seq_teacher NUMBER references tblTeacher(seq_teacher) NOT NULL,         -- 교사번호(FK)
+seq_opencourse NUMBER references tblOpenCourse(seq_opencourse) NOT NULL     -- 과정번호(FK)
+);
+
+create sequence seq_lecture;                --tblLecture 테이블의 기본키
+
+
+drop table tblLecture;
+drop sequence seq_lecture;
+
+select * from tblLecture;
+
+
+-----------------------------------------------------------
+-- 교육생 - 기초데이터
+-----------------------------------------------------------
+create table tblStudent( -- 교육생 - 기초데이터
+seq_student	NUMBER	PRIMARY key, -- 번호(PK)
+student_name VARCHAR2(15) NOT NULL, -- 이름
+student_ssn	VARCHAR2(50) NOT NULL, -- 주민번호 뒷자리
+student_tel	VARCHAR2(50) NOT NULL, -- 전화번호
+major VARCHAR2(50) NOT NULL -- 전공/비전공
+);
+
+create SEQUENCE seq_student; -- 교육생 - 기초데이터번호
+
+drop table tblStudent;
+drop table seq_student;
+
+select * from tblStudent;
+
+
+
+----------------------------------------------------------
+-- 교육생 + 과정 - 수강신청
+----------------------------------------------------------
+create table tblRegistCourse( -- 교육생 + 과정 - 수강신청
+seq_regist_course NUMBER PRIMARY key, -- 번호(PK)
+seq_student	NUMBER REFERENCES tblStudent(seq_student) NOT NULL,	-- 교육생 번호(FK)
+seq_opencourse	NUMBER	REFERENCES tblOpenCourse(seq_opencourse) NOT NULL, -- 과정 번호(FK)
+regist_date	DATE NOT NULL, -- 등록일
+p_date_s_date DATE NULL, -- 수료날짜/탈락날짜
+resist_course_state	VARCHAR2(20) NOT NULL -- 상태
+);
+
+create SEQUENCE seq_regist_course; -- 교육생 + 과정 - 수강신청번호
+
+drop table tblRegistCourse;
+drop SEQUENCE seq_regist_course;
+
+select * from tblRegistCourse;
+
+
+---------------------------------------
+-- 출결 데이터
+----------------------------------------
+create table tblAttendence(
+seq_sttendence NUMBER primary key,      --번호
+attendence_date date not null,      --출석 날짜
+attendense_state varchar2(15) default '결석' not null,        --출석현황
+in_time date null,      --출근시간
+out_time date null,     --퇴근시간
+seq_regist_course number references tblRegistCourse(seq_regist_course) not null
+);
+
+create sequence seq_attendence;     --출결번호
+
+
+---------------------------------------
+-- 평가 데이터
+----------------------------------------
+create table tblEvaluation
+(
+seq_evaluation NUMBER	primary key NOT NULL,           --번호(PK_
+course_evaluation	NUMBER	NULL,                       --강의 평가 내용
+teacher_evaulation	NUMBER	NULL,                   --교사 평가 내용
+seq_lecture NUMBER references tblLecture(seq_lecture)	NOT NULL,           --강의 번호(FK)
+seq_regist_course NUMBER	references tblRegistCourse(seq_regist_course) NOT NULL          --수강신청 번호(FK)
+);
+create sequence seq_evaluation;             --tblEvaluation 테이블의 기본키
+
+drop table tblEvaluation;
+drop sequence seq_evaluation;
+
+select * from tblEvaluation;
+
+---------------------------------------
+-- 개설 과목 데이터
+----------------------------------------
+create table tblOpenSubject
+(
+    seq_opensubject number primary key,                                         --번호(PK)
+    subject_start_date date not null,                                                      --과목 시작 날짜
+    subject_finish_date date not null,                                                     --과목 종료 날짜
+    seq_subject number references tblSubject(seq_subject) not null,     -- 과목 번호(FK)
+    seq_book number references tblBook(seq_book) not null,              -- 교재 번호(FK)
+    seq_lecture number references tblLecture(seq_lecture) not null      --강의 번호(FK)
+);
+
+create sequence seq_opensubject;                --tblOpenSubject테이블의 기본키
+
+drop table tblOpenSubject;
+drop sequence seq_opensubject;
+
+select * from tblOpenSubject;
+
+
+
+
+
+---------------------------------------
+-- 개설과정 + 개설과목 연결 데이터
+----------------------------------------
+create table tblOpenCourseSubject
+(
+seq_opencourse NUMBER	references tblOpenCourse(seq_opencourse) NOT NULL,      --개설 과정 번호(FK)
+seq_opensubject NUMBER	references tblOpenSubject(seq_opensubject) NOT NULL     --개설 과목 번호(FK)
+);
+
+drop table tblOpenCourseSubject;
+
+select * from tblOpenCourseSubject;
+
+
+---------------------------------------
+-- 배점 데이터
+----------------------------------------
+create table tblPoint
+(
+    seq_point number primary key,               --번호(PK)
+    written_test_point number null,                 --필기배점
+    practical_test_point number null,              --실기배점 
+    attendense_point number null,                   --출결배점
+    seq_opensubject number references tblOpenSubject(seq_opensubject) not null              --개설 과목 번호
+);
+
+create sequence seq_point;                  --tblPoint 테이블의 기본키
+
+drop table tblPoint;
+drop sequence seq_point;
+
+select * from tblPoint;
+
+---------------------------------------
+-- 시험 데이터
+----------------------------------------
+create table tblTest
+(
+seq_test NUMBER	primary key NOT NULL,                   --번호(PK)
+seq_opensubject NUMBER	references tblOpenSubject(seq_opensubject) NOT NULL,        --개설 과목 번호(FK)
+test_date DATE	NOT NULL                --시험 날짜
+);
+
+create sequence seq_test;           --tblTest 테이블의 기본키
+
+drop table tblTest;
+drop sequence seq_test;
+
+select * from tblTest;
+
+
+---------------------------------------
+-- 동아리 스케줄 데이터
+----------------------------------------
+create table tblStudyGroupSchedual
+(
+seq_study_group_schedual NUMBER	primary key NOT NULL,           --번호(PK)
+study_group_schedual_date	DATE	NOT NULL,                                       --날짜
+study_group_schedual_room	VARCHAR2(20)	NOT NULL,                   --장소
+study_group_schedual_capacity	 NUMBER	NOT NULL                            --최대인원
+);
+create sequence seq_study_group_schedual;           --tblStudyGroupSchedual 테이블의 기본키
+
+drop table tblStudyGroupSchedual;
+drop sequence seq_study_group_schedual;
+
+select * from tblStudyGroupSchedual;
+
+
+---------------------------------------------------------------------
+-- 개설 동아리
+---------------------------------------------------------------------
+
+create table tblOpenStudyGroup( -- 개설 동아리
+seq_open_study_group	NUMBER PRIMARY key, -- 번호(PK)
+study_group_name	VARCHAR2(50)	NOT NULL -- 동아리명
+);
+
+create SEQUENCE seq_open_study_group; -- 개설 동아리번호
+
+drop table tblOpenStudyGroup;
+drop SEQUENCE seq_open_study_group;
+
+select * from tblOpenStudyGroup;
+
+
+----------------------------------------------------------------
+-- 교육생 + 동아리 - 동아리 가입
+----------------------------------------------------------------
+
+create table tblStudyGroup( -- 교육생 + 동아리 - 동아리 가입
+seq_study_group	NUMBER	PRIMARY key, -- 번호(PK)
+seq_student	NUMBER REFERENCES tblStudent(seq_student)	NOT NULL, --교육생 - 기초데이터번호(FK)
+seq_open_study_group	NUMBER	REFERENCES tblOpenStudyGroup(seq_open_study_group) NOT NULL, --개설 동아리번호
+state_study_group	VARCHAR2(15)	NOT NULL -- 상태
+);
+
+create SEQUENCE seq_study_group; -- 교육생 + 동아리 - 동아리 가입번호
+
+drop table tblStudyGroup;
+drop SEQUENCE seq_study_group;
+
+select * from tblStudyGroup;
+
+
+
+
+----------------------------------------------------------
+-- 회사 정보
+----------------------------------------------------------
+create table tblCompany(
+seq_company number primary key,     --번호
+company_name varchar2(50) not null,     --회사명
+company_tel varchar2(30) not null,      --회사전화번호
+company_address varchar2(100) not null      --회사주소
+);
+create sequence seq_company;        --회사번호
+
+
+
+
+----------------------------------------------------------
+-- 취업 정보
+----------------------------------------------------------
+
+Create table tblJobInfo( -- 취업정보
+seq_job_info NUMBER	primary key, -- 번호(PK)
+seq_company	NUMBER	REFERENCES tblCompany(seq_company) not null,  -- 회사번호(FK)
+seq_regist_course NUMBER REFERENCES tblRegistCourse(seq_regist_course)null,	 -- 교육생 + 과정 - 수강신청번호(FK)
+seq_study_group	NUMBER REFERENCES tblStudyGroup(seq_study_group) null	 -- 교육생 + 동아리 - 동아리가입번호(FK)
+);
+
+create SEQUENCE seq_job_info; -- 취업정보번호
+
+drop table tblJobInfo;
+drop SEQUENCE seq_job_info;
+
+select * from tblJobInfo;
+
+
+--------------------------------------------------------------------
+-- 성적 점수
+--------------------------------------------------------------------
+create table tblScore
+(
+seq_score NUMBER primary key,
+written_test_score	NUMBER	NULL,
+practical_test_score	NUMBER	NULL,
+attendence_score	NUMBER	NULL,
+seq_regist_course NUMBER references tblRegistCourse(seq_regist_course)	NOT NULL
+);
+create SEQUENCE seq_score;
+
+
+drop table tblScore;
+drop SEQUENCE seq_score;
+
+select * from tblScore;
+
+
+--------------------------------------------------------------------
+-- 성적 - 개설동아리
+--------------------------------------------------------------------
+
+create table tblOpenScore( -- 성적 - 개설동아리
+seq_openscore	NUMBER	primary key, -- 번호(PK)
+seq_score	NUMBER REFERENCES tblScore(seq_score)	NOT NULL, -- 성적점수 번호
+seq_open_study_group NUMBER	REFERENCES tblOpenStudyGroup(seq_open_study_group)NOT NULL --개설 동아리번호
+);
+
+create SEQUENCE seq_openscore;
+
+drop table tblOpenScore;
+drop SEQUENCE seq_openscore;
+
+select * from tblOpenScore;
+
+
+
+--------------------------------------------------------------------------
+-- 가입기준
+--------------------------------------------------------------------------
+
+create table tblStudyStandard( -- 가입기준
+seq_study_standard number PRIMARY key, -- 번호(PK)
+study_standard	VARCHAR2(20)	NULL, -- 가입기준
+seq_open_study_group NUMBER REFERENCES tblOpenStudyGroup(seq_open_study_group)	NOT NULL -- 개설 동아리번호(FK)
+);
+
+CREATE SEQUENCE seq_study_standard; -- 가입기준번호
+
+drop table tblStudyStandard;
+drop SEQUENCE seq_study_standard;
+
+select * from tblStudyStandard;
+
+------------------------------------------------------------------------
+-- 동아리 스케줄 참여
+------------------------------------------------------------------------
+
+create table tblStudyGroupSchedualAttend( -- 동아리 스케줄 참여
+seq_study_grp_schdl_attend number PRIMARY key, -- 번호(PK)
+seq_study_group	NUMBER REFERENCES tblStudyGroup(seq_study_group)	NOT NULL, -- 동아리 가입 번호(FK)
+seq_study_group_schedual	NUMBER REFERENCES tblStudyGroupSchedual(seq_study_group_schedual)	NOT NULL, -- 동아리 스케줄 번호(FK)
+attend_response	VARCHAR2(20)	DEFAULT '미응답' -- 참여응답
+);
+
+create SEQUENCE seq_study_grp_schdl_attend; -- 동아리 스케줄 참여번호
+
+drop table tblStudyGroupSchedualAttend;
+drop SEQUENCE seq_study_grp_schdl_attend;
+
+select * from tblStudyGroupSchedualAttend;
+
+commit;
