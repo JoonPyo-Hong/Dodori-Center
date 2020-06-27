@@ -1,7 +1,7 @@
 # 도돌이 센터
 
 
-### 프로젝트
+### :four_leaf_clover:프로젝트
 <table>
   <tr>
     <td>프로젝트명</td>
@@ -17,7 +17,7 @@
   </tr>
 </table>
 
-### 역할 및 구성원
+### :four_leaf_clover:역할 및 구성원
 <table> 
   <tr>
       <td>구성원</td>
