@@ -15,6 +15,10 @@
     <th>개발 인원</th>
     <th>강혜림, 신승환, 이수지, 조윤경, 홍준표, 홍혜림</th>
   </tr>
+  <tr>
+    <th>프로젝트 기술</th>
+    <th>Java<br>Oracle SQL<br>exERD<br>Eclipse,Github</th>
+  </tr>
 </table>
 
 ### :four_leaf_clover:역할 및 구성원
