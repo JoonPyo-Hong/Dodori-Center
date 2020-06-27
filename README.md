@@ -17,7 +17,7 @@
   </tr>
   <tr>
     <th>프로젝트 기술</th>
-    <th colsapn="5">Java<br>Oracle SQL<br>exERD<br>Eclipse<br>Github</th>
+    <th colspan="3">Java<br>Oracle SQL<br>exERD<br>Eclipse<br>Github</th>
   </tr>
 </table>
 
