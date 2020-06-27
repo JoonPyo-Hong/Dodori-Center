@@ -16,7 +16,7 @@
     <th>강혜림, 신승환, 이수지, 조윤경, 홍준표, 홍혜림</th>
   </tr>
   <tr>
-    <th rowspan="5">프로젝트 기술</th>
+    <th rowspan="6">프로젝트 기술</th>
     <th>Java</th>
  </tr>   
   <tr> 
