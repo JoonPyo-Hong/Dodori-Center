@@ -54,15 +54,15 @@
       <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
       <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
       <th>DML<br>DDL<br>Java DOC<br>요구분석서<br>ERD<br>README.md</th>
-      <th>테이블<br>명세서<br>기획서<br>요구<br>분석서<br>ERD</th>
+      <th>테이블 명세서<br>기획서<br>요구 분석서<br>ERD</th>
   </tr>
     <tr>
       <th>역할<br>및<br>업무</th>
       <th>발표<br>관리자 코드 구현<br>화면설계<br>데이터 생성<br>DB 설계</th>
-      <th>교사(전체) 코드 구현<br>화면설계<br>소스취합<br>데이터 생성<br>DB 설계</th>
+      <th>교사(전체)코드 구현<br>화면설계<br>소스취합<br>데이터 생성<br>DB 설계</th>
       <th>관리자 코드 구현<br>화면설계<br>데이터 생성<br>DB 설계</th>
       <th>팀장<br>발표 보조<br>관리자 코드 구현<br>화면설계<br>데이터 생성<br>DB 설계</th>
-      <th>교육생(전체) 코드 구현<br>관리자 코드 구현<br>화면설계<br>데이터 생성<br>DB 설계</th>
+      <th>교육생(전체)코드 구현<br>관리자 코드 구현<br>화면설계<br>데이터 생성<br>DB 설계</th>
       <th>데이터 생성<br>DB 설계</th>
   </tr>
 </table>
