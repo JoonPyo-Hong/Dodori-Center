@@ -1,4 +1,4 @@
-# :sunny:도돌이 센터
+# 도돌이 센터
 
 
 ### :four_leaf_clover:프로젝트
