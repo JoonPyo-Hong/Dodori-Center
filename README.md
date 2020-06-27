@@ -20,23 +20,22 @@
     <th colspan="5">Java</th>
  </tr>   
   <tr>
-    <th colspan="5"></th>
+
     <th colspan="5"> Oracle</th>
   </tr>  
   <tr>
-    <th colspan="5"></th>
+ 
     <th colspan="5">SQL</th>
   </tr>  
   <tr>
-    <th colspan="5"></th>
+  
     <th colspan="5">exERD</th>
   </tr>  
   <tr>
-    <th colspan="5"></th>
     <th colspan="5">Eclipse</th>
   </tr>  
   <tr>
-    <th colspan="5"></th>
+ 
     <th colspan="5">Github</th>
   </tr>
 </table>
