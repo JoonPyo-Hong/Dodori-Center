@@ -17,10 +17,10 @@
   </tr>
   <tr>
     <th rowspan="6">프로젝트 기술</th>
-    <th colspan="5">Java</th>
+    <th colspan="5">Oracle</th>
  </tr>   
   <tr>
-    <th colspan="5"> Oracle</th>
+    <th colspan="5">Java</th>
   </tr>  
   <tr>
     <th colspan="5">SQL</th>
