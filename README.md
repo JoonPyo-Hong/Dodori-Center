@@ -16,8 +16,27 @@
     <th>강혜림, 신승환, 이수지, 조윤경, 홍준표, 홍혜림</th>
   </tr>
   <tr>
-    <th>프로젝트 기술</th>
-    <th colspan="3">Java<br>Oracle SQL<br>exERD<br>Eclipse<br>Github</th>
+    <th rowspan="5">프로젝트 기술</th>
+    <th>Java</th>
+ </tr>   
+  <tr> 
+    <th> Oracle</th>
+  </tr>  
+  <tr>
+    <th></th>
+    <th>SQL</th>
+  </tr>  
+  <tr>
+    <th></th>
+    <th>exERD</th>
+  </tr>  
+  <tr>
+    <th></th>
+    <th>Eclipse</th>
+  </tr>  
+  <tr>
+    <th></th>
+    <th>Github</th>
   </tr>
 </table>
 
