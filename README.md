@@ -13,7 +13,7 @@
     <th>프로젝트 개요</th>
     <th>SW 교육센터 운영 프로그램</th>
     <th>개발 인원</th>
-    <th>강혜림, 신승환, 이수지, 조윤경,<a href="https://github.com/wnsvy4231">홍준표</a>,홍혜림</th>
+    <th>강혜림, 신승환, 이수지, 조윤경, <a href="https://github.com/wnsvy4231">홍준표</a>, 홍혜림</th>
   </tr>
   <tr>
     <th rowspan="6">프로젝트 기술</th>
@@ -44,7 +44,7 @@
       <th>신승환</th>
       <th>이수지</th>
       <th>조윤경</th>
-      <th>홍준표</th>
+      <th><a href="https://github.com/wnsvy4231">홍준표</a></th>
       <th>홍혜림</th>
   </tr>
    <tr>
