@@ -34,7 +34,7 @@
       <td>DML, Java DOC, 요구분석서, ERD</td>
       <td>DML, Java DOC, 요구분석서, ERD</td>
       <td>DML, Java DOC, 요구분석서, ERD</td>
-      <td>DML, DDL, Java DOC, 요구분석서, ERD </td>
+      <td>DML, DDL, Java DOC, 요구분석서, ERD, README.md</td>
       <td>테이블 명세서, 기획서, 요구분석서, ERD</td>
   </tr>
     <tr>
