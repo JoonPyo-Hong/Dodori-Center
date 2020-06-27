@@ -29,7 +29,7 @@
       <th>홍혜림</th>
   </tr>
    <tr>
-      <th>문서 작성</th>
+      <th>문서<br>작성</th>
       <th>DML<br>DDL<br>Java DOC<br>요구분석서<br>ERD</th>
       <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
       <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
