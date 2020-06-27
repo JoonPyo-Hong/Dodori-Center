@@ -11,7 +11,7 @@
   </tr>
   <tr>
     <th>개발 인원</th>
-    <th>강혜림, 신승환, 이수지, 조윤경, 홍준표, 홍혜림</th>
+    <th>강혜림<br>신승환<br>이수지<br>조윤경<br>홍준표<br>홍혜림</th>
     <th>프로젝트 개요</th>
     <th>SW 교육센터 운영 프로그램</th>
   </tr>
@@ -30,20 +30,20 @@
   </tr>
    <tr>
       <th>문서 작성</th>
-      <th>DML, DDL, Java DOC, 요구분석서, ERD</th>
-      <th>DML, Java DOC, 요구분석서, ERD</th>
-      <th>DML, Java DOC, 요구분석서, ERD</th>
-      <th>DML, Java DOC, 요구분석서, ERD</th>
-      <th>DML, DDL, Java DOC, 요구분석서, ERD, README.md</th>
-      <th>테이블 명세서, 기획서, 요구분석서, ERD</th>
+      <th>DML<br>DDL<br>Java DOC<br>요구분석서<br>ERD</th>
+      <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
+      <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
+      <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
+      <th>DML<br>DDL<br>Java DOC<br>요구분석서<br>ERD<br>README.md</th>
+      <th>테이블 명세서<br>기획서<br>요구분석서<br>ERD</th>
   </tr>
     <tr>
       <th>역할 및 업무</th>
-      <th>발표, 관리자 코드 구현, 화면설계, 데이터 생성</th>
-      <th>교사(전체) 코드 구현, 화면설계, 소스취합, 데이터 생성</th>
-      <th>관리자 코드 구현, 화면설계, 데이터 생성</th>
-      <th>팀장, 발표 보조, 관리자 코드 구현, 화면설계, 데이터 생성</th>
-      <th>교육생(전체) + 관리자 코드 구현, 화면설계, 데이터 생성</th>
+      <th>발표<br>관리자 코드 구현<br>화면설계<br>데이터 생성</th>
+      <th>교사(전체) 코드 구현<br>화면설계<br>소스취합<br>데이터 생성</th>
+      <th>관리자 코드 구현<br>화면설계<br>데이터 생성</th>
+      <th>팀장<br>발표 보조<br>관리자 코드 구현<br>화면설계<br>데이터 생성</th>
+      <th>교육생(전체) + 관리자 코드 구현<br>화면설계<br>데이터 생성</th>
       <th>데이터 생성</th>
   </tr>
 </table>
