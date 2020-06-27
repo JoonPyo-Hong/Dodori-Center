@@ -2,9 +2,9 @@
 
 
 ### :four_leaf_clover:프로젝트
-**<table>
+<table>
   <tr>
-    <td>프로젝트명</td>
+    <td>**프로젝트명**</td>
     <td>도돌이 센터</td>
     <td>개발 기간</td>
     <td>2020.06-03 ~ 2020.06.17</td>
@@ -15,7 +15,7 @@
     <td>프로젝트 개요</td>
     <td>SW 교육센터 운영 프로그램</td>
   </tr>
-</table>**
+</table>
 
 ### :four_leaf_clover:역할 및 구성원
 <table> 
