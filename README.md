@@ -17,26 +17,27 @@
   </tr>
   <tr>
     <th rowspan="6">프로젝트 기술</th>
-    <th>Java</th>
+    <th colspan="5">Java</th>
  </tr>   
-  <tr> 
-    <th> Oracle</th>
+  <tr>
+    <th colspan="5"></th>
+    <th colspan="5"> Oracle</th>
   </tr>  
   <tr>
-    <th></th>
-    <th>SQL</th>
+    <th colspan="5"></th>
+    <th colspan="5">SQL</th>
   </tr>  
   <tr>
-    <th></th>
-    <th>exERD</th>
+    <th colspan="5"></th>
+    <th colspan="5">exERD</th>
   </tr>  
   <tr>
-    <th></th>
-    <th>Eclipse</th>
+    <th colspan="5"></th>
+    <th colspan="5">Eclipse</th>
   </tr>  
   <tr>
-    <th></th>
-    <th>Github</th>
+    <th colspan="5"></th>
+    <th colspan="5">Github</th>
   </tr>
 </table>
 
