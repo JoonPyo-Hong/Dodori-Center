@@ -36,6 +36,8 @@
     <th colspan="5">Github</th>
   </tr>
 </table>
+<h1 style="text align : center">화면설계</h1>
+<div></div>
 
 ### :four_leaf_clover:역할 및 구성원
 <table> 
@@ -43,7 +45,7 @@
       <th>구성원</th>
       <th><a href="https://github.com/harim0235">강혜림</a></th>
       <th><a href="https://github.com/sexyseunghwan">신승환</a></th>
-      <th>이수지</th>
+      <th><a href="https://github.com/suji-l">이수지</a></th>
       <th><a href="https://github.com/joyoonkyung">조윤경</a></th>
       <th><a href="https://github.com/wnsvy4231">홍준표</a></th>
       <th>홍혜림</th>
