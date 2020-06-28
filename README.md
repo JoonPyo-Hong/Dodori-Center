@@ -37,7 +37,7 @@
   </tr>
 </table>
 #화면설계
-<div><a hreh="https://drive.google.com/file/d/1jJSGtSHBIPU-4eAeMQPV0aA-kkhj4iN4/view?usp=sharing></a></div>
+<div><a href="https://drive.google.com/file/d/1jJSGtSHBIPU-4eAeMQPV0aA-kkhj4iN4/view?usp=sharing"></a></div>
 
 ### :four_leaf_clover:역할 및 구성원
 <table> 
