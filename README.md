@@ -14,7 +14,7 @@
     <th>프로젝트 개요</th>
     <th>SW 교육센터 운영 프로그램</th>
     <th>개발 인원</th>
-    <th><a href="https://github.com/harim0235">강혜림</a>, <a href="https://github.com/sexyseunghwan">신승환</a>, 이수지, <a href="https://github.com/joyoonkyung">조윤경</a>, <a href="https://github.com/wnsvy4231">홍준표</a>, 홍혜림</th>
+    <th><a href="https://github.com/harim0235">강혜림</a>, <a href="https://github.com/sexyseunghwan">신승환</a>, <a href="https://github.com/suji-l">이수지</a>, <a href="https://github.com/joyoonkyung">조윤경</a>, <a href="https://github.com/wnsvy4231">홍준표</a>, 홍혜림</th>
   </tr>
   <tr>
     <th rowspan="6">프로젝트 기술</th>
