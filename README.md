@@ -36,8 +36,8 @@
     <th colspan="5">Github</th>
   </tr>
 </table>
-<h1 style="text align : center">화면설계</h1>
-<div></div>
+#화면설계
+<div><a hreh="https://drive.google.com/file/d/1jJSGtSHBIPU-4eAeMQPV0aA-kkhj4iN4/view?usp=sharing></a></div>
 
 ### :four_leaf_clover:역할 및 구성원
 <table> 
