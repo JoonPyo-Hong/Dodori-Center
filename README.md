@@ -38,7 +38,7 @@
 </table>
 
 ### :four_leaf_clover: 구현화면
-<div><a href="https://user-images.githubusercontent.com/65217717/86286924-4d4ca500-bc22-11ea-8fd0-fdb004852244.gif"></a></div>
+<div><img src="https://user-images.githubusercontent.com/65217717/86288660-39ef0900-bc25-11ea-92f1-5ac23f755168.gif"></div>
 
 ### :four_leaf_clover:역할 및 구성원
 <table> 
