@@ -55,7 +55,7 @@
       <th>문서<br>작성</th>
       <th>DML<br>DDL<br>Java DOC<br>요구분석서<br>ERD</th>
       <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
-      <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
+      <th>DML<br>Java DOC<br>요구분석서<br>ERD<br>README.md</th>
       <th>DML<br>Java DOC<br>요구분석서<br>ERD</th>
       <th>DML<br>DDL<br>Java DOC<br>요구분석서<br>ERD<br>README.md</th>
       <th>테이블 명세서<br>기획서<br>요구 분석서<br>ERD</th>
