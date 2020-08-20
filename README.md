@@ -48,8 +48,8 @@
       <th><a href="https://github.com/sexyseunghwan">신승환</a></th>
       <th><a href="https://github.com/suji-l">이수지</a></th>
       <th><a href="https://github.com/joyoonkyung">조윤경</a></th>
-      <th><a href="https://github.com/wnsvy4231">홍준표</a></th>
-      <th>홍혜림</th>
+      <th><a href="https://github.com/wnsvy4231"><a href="https://github.com/wnsvy4231">홍준표</></a></th>
+      <th><a href="https://www.naver.com/">홍혜림</a></th>
   </tr>
    <tr>
       <th>문서<br>작성</th>
